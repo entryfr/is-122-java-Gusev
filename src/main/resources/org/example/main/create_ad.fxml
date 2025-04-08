@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.main.controllers.CreateAdController">
+    <Label text="Создать объявление" style="-fx-font-size: 24px;"/>
+    <TextField fx:id="titleField" promptText="Название товара" />
+    <ComboBox fx:id="categoryComboBox" promptText="Категория" />
+    <TextField fx:id="priceField" promptText="Цена" />
+    <TextArea fx:id="descriptionField" promptText="Описание" />
+    <Button text="Выбрать изображение" onAction="#handleImageUpload" />
+    <TextField fx:id="locationField" promptText="Локация" />
+    <Button text="Создать" onAction="#handleCreateAd" />
+</VBox>

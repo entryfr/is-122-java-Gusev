@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.main.controllers.BasketController">
+    <!-- Верхняя панель с заголовком и кнопкой "крестик" -->
+    <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10;">
+        <!-- Заголовок -->
+        <Label text="Корзина" style="-fx-font-size: 24px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
+
+        <!-- Кнопка "крестик" для возврата на главную страницу -->
+        <Button text="×" style="-fx-font-size: 20px; -fx-background-color: transparent; -fx-text-fill: red;"
+                onAction="#handleBackToIndex" />
+    </HBox>
+
+    <!-- Список товаров -->
+    <ListView fx:id="basketList" VBox.vgrow="ALWAYS" />
+
+    <!-- Панель управления -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <!-- Кнопка "Очистить корзину" -->
+        <Button text="Очистить корзину" onAction="#handleClearBasket" />
+
+        <!-- Кнопка "Купить" -->
+        <Button text="Купить" onAction="#handleBuy" />
+        <Button text="Вернуться к покупкам" onAction="#handleBackToIndex" />
+    </HBox>
+
+    <!-- Общая стоимость -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Общая стоимость:" />
+        <Label fx:id="totalPriceLabel" text="0.00 руб." style="-fx-font-weight: bold;" />
+    </HBox>
+</VBox>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import org.example.main.utils.AdCellFactory?>
+
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.main.controllers.IndexController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+
+    <!-- Приветственная метка -->
+    <Label fx:id="welcomeText" text="Добро пожаловать!" style="-fx-font-size: 24px;" />
+
+    <!-- Поле для поиска объявлений -->
+    <TextField fx:id="searchField" promptText="Поиск товаров..." />
+
+    <!-- Кнопка для выполнения поиска -->
+    <Button text="Поиск" onAction="#handleSearch"/>
+
+    <!-- Список найденных объявлений -->
+    <ListView fx:id="adsList" prefHeight="300">
+        <!-- Пользовательский cellFactory для отображения товара и кнопки "Купить" -->
+        <cellFactory>
+            <AdCellFactory />
+        </cellFactory>
+    </ListView>
+
+    <!-- Блок для отображения имени пользователя -->
+    <HBox spacing="10" fx:id="userBlock" managed="false" visible="false">
+        <Label fx:id="usernameLabel" style="-fx-font-weight: bold;" />
+        <Button text="Выйти" onAction="#handleLogout" />
+        <!-- Кнопка корзины для авторизованных пользователей -->
+        <Button text="Корзина" onAction="#openBasket" />
+    </HBox>
+
+    <!-- Блок для кнопок входа/регистрации -->
+    <HBox spacing="10" fx:id="authBlock" managed="true" visible="true">
+        <Button text="Войти" onAction="#handleLogin" />
+        <Button text="Зарегистрироваться" onAction="#handleRegister" />
+    </HBox>
+
+    <!-- Кнопка для создания объявления -->
+    <Button text="Создать объявление" onAction="#createAd"/>
+</VBox>

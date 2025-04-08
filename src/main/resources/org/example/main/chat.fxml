@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.main.controllers.ChatController">
+    <Label text="Чат" style="-fx-font-size: 24px;"/>
+    <ListView fx:id="chatMessages" />
+<!--    <TextField fx:id="messageInput" promptText="Введите сообщение..." />-->
+    <Button text="Отправить" onAction="#sendMessage" />
+</VBox>
