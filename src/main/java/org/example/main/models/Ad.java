@@ -1,24 +1,38 @@
 package org.example.main.models;
 
+import javafx.scene.image.Image;
+
 public class Ad {
     private int adId;
-    private int userId; // Идентификатор пользователя (продавца)
+    private int sellerId; // ID продавца (пользователя)
+
     private String title;
     private int categoryId;
     private double price;
     private String description;
     private byte[] image;
     private String location;
-    private String status; // Статус объявления (например, "active" или "sold")
+    private String status; // Статус объявления: "active", "sold"
 
-    public int getSellerId() {
-        return userId; // Возвращаем userId как sellerId
+
+    public Ad() {}
+
+
+    public Ad(int adId, int sellerId, String title, int categoryId, double price, String description, byte[] image, String location, String status) {
+        this.adId = adId;
+        this.sellerId = sellerId;
+        this.title = title;
+        this.categoryId = categoryId;
+        this.price = price;
+        this.description = description;
+        this.image = image;
+        this.location = location;
+        this.status = status;
     }
 
-    public void setSellerId(int sellerId) {
-        this.userId = sellerId; // Устанавливаем userId как sellerId
-    }
-
+    /**
+     * Геттеры и сеттеры.
+     */
     public int getAdId() {
         return adId;
     }
@@ -27,12 +41,12 @@ public class Ad {
         this.adId = adId;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getSellerId() {
+        return sellerId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setSellerId(int sellerId) {
+        this.sellerId = sellerId;
     }
 
     public String getTitle() {
@@ -89,5 +103,19 @@ public class Ad {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+
+    public Image getImageAsFXImage() {
+        if (image == null || image.length == 0) {
+            return null;
+        }
+        return new Image(new java.io.ByteArrayInputStream(image));
+    }
+
+
+    @Override
+    public String toString() {
+        return title != null ? title +" "+ price +" руб."  : "Без названия";
     }
 }

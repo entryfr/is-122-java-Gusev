@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import org.example.main.controllers.EditProfileController?>
+
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.main.controllers.EditProfileController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+
+    <!-- Заголовок с кнопкой закрытия -->
+    <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 0 0 20 0;">
+        <Label text="Редактирование профиля" style="-fx-font-size: 24px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
+        <!-- Кнопка закрытия (крестик) -->
+        <Button text="×" onAction="#cancel" style="-fx-font-size: 20px; -fx-background-color: transparent; -fx-text-fill: #F44336;" />
+    </HBox>
+
+    <!-- Имя пользователя -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Имя пользователя:" />
+        <TextField fx:id="usernameField" editable="false" prefWidth="250" />
+    </HBox>
+
+    <!-- Email -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Email:" />
+        <TextField fx:id="emailField" prefWidth="250" />
+    </HBox>
+
+    <!-- Имя -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Имя:" />
+        <TextField fx:id="firstNameField" prefWidth="250" />
+    </HBox>
+
+    <!-- Фамилия -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Фамилия:" />
+        <TextField fx:id="lastNameField" prefWidth="250" />
+    </HBox>
+
+    <!-- Телефон -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Телефон:" />
+        <TextField fx:id="phoneField" prefWidth="250" />
+    </HBox>
+
+    <!-- Кнопка сохранения -->
+    <Button text="Сохранить изменения" onAction="#saveChanges" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
+
+    <!-- Кнопка отмены -->
+    <Button text="Отмена" onAction="#cancel" style="-fx-background-color: #F44336; -fx-text-fill: white;" />
+</VBox>

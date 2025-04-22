@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.main.controllers.AdDetailsController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+
+    <!-- Заголовок -->
+    <Label text="Описание объявления" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+
+    <!-- Изображение товара -->
+    <ImageView fx:id="imageView" fitWidth="300" fitHeight="200" preserveRatio="true" />
+
+    <!-- Название товара -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Название:" />
+        <Label fx:id="titleLabel" style="-fx-font-weight: bold;" />
+    </HBox>
+
+    <!-- Цена -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Цена:" />
+        <Label fx:id="priceLabel" />
+    </HBox>
+
+    <!-- Описание -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Описание:" />
+        <TextArea fx:id="descriptionField" editable="false" prefWidth="400" prefHeight="100" wrapText="true" />
+    </HBox>
+
+    <!-- Местоположение -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Местоположение:" />
+        <Label fx:id="locationLabel" />
+    </HBox>
+
+    <!-- Кнопка "Назад" -->
+    <Button text="Назад" onAction="#goBack" style="-fx-background-color: #F44336; -fx-text-fill: white;" />
+</VBox>

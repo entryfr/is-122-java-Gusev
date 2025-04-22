@@ -2,6 +2,7 @@ module org.example.main {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires java.desktop;
 
     // Экспортируем пакеты, чтобы они были доступны другим модулям
     exports org.example.main; // Основной пакет

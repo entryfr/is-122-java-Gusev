@@ -1,0 +1,17 @@
+/* Стиль для сообщений текущего пользователя */
+.user-message {
+    -fx-alignment: center-right;
+    -fx-background-color: #dcffdc; /* Зеленый фон */
+    -fx-padding: 10px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+/* Стиль для сообщений других пользователей */
+.other-message {
+    -fx-alignment: center-left;
+    -fx-background-color: #f0f0f0; /* Серый фон */
+    -fx-padding: 10px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}

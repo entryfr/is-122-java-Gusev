@@ -5,20 +5,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Chat {
-    private int chatId;
-    private int user1Id;
-    private int user2Id;
-    private String lastMessage;
-    private LocalDateTime lastMessageTime;
+    // Поля класса
+    private int chatId; // Уникальный ID чата
+    private int user1Id; // ID первого пользователя
+    private int user2Id; // ID второго пользователя
+    private String lastMessage; // Последнее сообщение в чате
+    private LocalDateTime lastMessageTime; // Время последнего сообщения
 
-    private String messageInput;
+    private List<Message> messages; // Список всех сообщений в чате
 
-    private List<Message> messages;
-
+    /**
+     * Конструктор по умолчанию.
+     */
     public Chat() {
         this.messages = new ArrayList<>();
     }
 
+    /**
+     * Конструктор с параметрами.
+     *
+     * @param chatId       ID чата
+     * @param user1Id      ID первого пользователя
+     * @param user2Id      ID второго пользователя
+     */
+    public Chat(int chatId, int user1Id, int user2Id) {
+        this.chatId = chatId;
+        this.user1Id = user1Id;
+        this.user2Id = user2Id;
+        this.messages = new ArrayList<>();
+    }
+
+    // Геттеры
     public int getChatId() {
         return chatId;
     }
@@ -37,10 +54,6 @@ public class Chat {
 
     public LocalDateTime getLastMessageTime() {
         return lastMessageTime;
-    }
-
-    public String getMessageInput() {
-        return messageInput;
     }
 
     public List<Message> getMessages() {
@@ -68,19 +81,65 @@ public class Chat {
         this.lastMessageTime = lastMessageTime;
     }
 
-    public void setMessageInput(String messageInput) {
-        this.messageInput = messageInput;
-    }
-
-
+    /**
+     * Добавление нового сообщения в чат.
+     *
+     * @param message новое сообщение
+     */
     public void addMessage(Message message) {
+        if (message == null) {
+            throw new IllegalArgumentException("Сообщение не может быть null");
+        }
         messages.add(message);
+
+        // Обновляем последнее сообщение и время
         this.lastMessage = message.getMessageText();
         this.lastMessageTime = message.getSentTime();
     }
 
+    /**
+     * Очистка списка сообщений (например, при удалении чата).
+     */
+    public void clearMessages() {
+        messages.clear();
+        this.lastMessage = null;
+        this.lastMessageTime = null;
+    }
 
-    public void clearMessageInput() {
-        this.messageInput = "";
+    /**
+     * Проверка, является ли пользователь участником чата.
+     *
+     * @param userId ID пользователя
+     * @return true, если пользователь участвует в чате
+     */
+    public boolean isParticipant(int userId) {
+        return this.user1Id == userId || this.user2Id == userId;
+    }
+
+    /**
+     * Получение другого участника чата.
+     *
+     * @param currentUserId ID текущего пользователя
+     * @return ID другого участника
+     */
+    public int getOtherParticipantId(int currentUserId) {
+        if (this.user1Id == currentUserId) {
+            return this.user2Id;
+        } else if (this.user2Id == currentUserId) {
+            return this.user1Id;
+        } else {
+            throw new IllegalArgumentException("Текущий пользователь не является участником чата");
+        }
+    }
+
+    /**
+     * Переопределение метода toString для удобного вывода информации о чате.
+     */
+    @Override
+    public String toString() {
+        return String.format(
+                "Chat{chatId=%d, user1Id=%d, user2Id=%d, lastMessage='%s', lastMessageTime=%s}",
+                chatId, user1Id, user2Id, lastMessage, lastMessageTime
+        );
     }
 }

@@ -10,10 +10,8 @@ public class SessionManager {
 
     private static final Logger logger = Logger.getLogger(SessionManager.class.getName());
 
-    // Хранилище данных сессии (потокобезопасное)
     private static final ConcurrentHashMap<String, Object> sessionData = new ConcurrentHashMap<>();
 
-    // Корзина товаров (потокобезопасная)
     private static final CopyOnWriteArrayList<CartItem> basket = new CopyOnWriteArrayList<>();
     public static String getLoggedInUsername() {
         return (String) sessionData.get("username");

@@ -2,14 +2,51 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
 
-<VBox spacing="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.main.controllers.CreateAdController">
-    <Label text="Создать объявление" style="-fx-font-size: 24px;"/>
-    <TextField fx:id="titleField" promptText="Название товара" />
-    <ComboBox fx:id="categoryComboBox" promptText="Категория" />
-    <TextField fx:id="priceField" promptText="Цена" />
-    <TextArea fx:id="descriptionField" promptText="Описание" />
-    <Button text="Выбрать изображение" onAction="#handleImageUpload" />
-    <TextField fx:id="locationField" promptText="Локация" />
-    <Button text="Создать" onAction="#handleCreateAd" />
+<VBox spacing="15" alignment="CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.main.controllers.CreateAdController">
+    <!-- Заголовок -->
+    <Label text="Создать объявление" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+
+    <!-- Поле для ввода названия товара -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Название:" />
+        <TextField fx:id="titleField" promptText="Введите название товара" HBox.hgrow="ALWAYS" />
+    </HBox>
+
+    <!-- Выбор категории -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Категория:" />
+        <ComboBox fx:id="categoryComboBox" promptText="Выберите категорию" HBox.hgrow="ALWAYS" />
+    </HBox>
+
+    <!-- Поле для ввода цены -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Цена:" />
+        <TextField fx:id="priceField" promptText="Введите цену" HBox.hgrow="ALWAYS" />
+    </HBox>
+
+    <!-- Поле для описания -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Описание:" />
+        <TextArea fx:id="descriptionField" promptText="Введите описание товара" prefRowCount="3" wrapText="true" HBox.hgrow="ALWAYS" />
+    </HBox>
+
+    <!-- Выбор изображения -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Изображение:" />
+        <Button text="Выбрать изображение" onAction="#handleImageUpload" />
+    </HBox>
+
+    <!-- Предпросмотр изображения -->
+    <ImageView fx:id="imageView" fitWidth="200" fitHeight="200" preserveRatio="true" visible="false" />
+
+    <!-- Поле для локации -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Локация:" />
+        <TextField fx:id="locationField" promptText="Введите локацию" HBox.hgrow="ALWAYS" />
+    </HBox>
+
+    <!-- Кнопка "Создать" -->
+    <Button text="Создать объявление" onAction="#handleCreateAd" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 16px;" />
 </VBox>

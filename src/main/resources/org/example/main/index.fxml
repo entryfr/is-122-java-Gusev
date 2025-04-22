@@ -3,6 +3,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import org.example.main.utils.AdCellFactory?>
+<?import org.example.main.controllers.IndexController?>
 
 <VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.main.controllers.IndexController">
@@ -11,16 +12,16 @@
     </padding>
 
     <!-- Приветственная метка -->
-    <Label fx:id="welcomeText" text="Добро пожаловать!" style="-fx-font-size: 24px;" />
+    <Label fx:id="welcomeText" text="Добро пожаловать!" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
 
-    <!-- Поле для поиска объявлений -->
-    <TextField fx:id="searchField" promptText="Поиск товаров..." />
-
-    <!-- Кнопка для выполнения поиска -->
-    <Button text="Поиск" onAction="#handleSearch"/>
+    <!-- Блок поиска -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="searchField" promptText="Поиск товаров..." HBox.hgrow="ALWAYS" />
+        <Button text="Поиск" onAction="#handleSearch" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
+    </HBox>
 
     <!-- Список найденных объявлений -->
-    <ListView fx:id="adsList" prefHeight="300">
+    <ListView fx:id="adsList" prefHeight="300" onMouseClicked="#handleAdDoubleClick">
         <!-- Пользовательский cellFactory для отображения товара и кнопки "Купить" -->
         <cellFactory>
             <AdCellFactory />
@@ -28,19 +29,23 @@
     </ListView>
 
     <!-- Блок для отображения имени пользователя -->
-    <HBox spacing="10" fx:id="userBlock" managed="false" visible="false">
-        <Label fx:id="usernameLabel" style="-fx-font-weight: bold;" />
-        <Button text="Выйти" onAction="#handleLogout" />
+    <HBox spacing="10" fx:id="userBlock" managed="false" visible="false" alignment="CENTER_RIGHT">
+        <Label fx:id="usernameLabel" style="-fx-font-weight: bold; -fx-font-size: 16px;" />
+        <Button text="Выйти" onAction="#handleLogout" style="-fx-background-color: #F44336; -fx-text-fill: white;" />
         <!-- Кнопка корзины для авторизованных пользователей -->
-        <Button text="Корзина" onAction="#openBasket" />
+        <Button text="Корзина" onAction="#openBasket" style="-fx-background-color: #2196F3; -fx-text-fill: white;" />
+        <!-- Кнопка для перехода в чат -->
+        <Button text="Чат" onAction="#openChatWindow" style="-fx-background-color: #FFC107; -fx-text-fill: black;" />
+        <!-- Кнопка для перехода в профиль -->
+        <Button text="Профиль" onAction="#openProfile" style="-fx-background-color: #673AB7; -fx-text-fill: white;" />
     </HBox>
 
     <!-- Блок для кнопок входа/регистрации -->
-    <HBox spacing="10" fx:id="authBlock" managed="true" visible="true">
-        <Button text="Войти" onAction="#handleLogin" />
-        <Button text="Зарегистрироваться" onAction="#handleRegister" />
+    <HBox spacing="10" fx:id="authBlock" managed="true" visible="true" alignment="CENTER_RIGHT">
+        <Button text="Войти" onAction="#handleLogin" style="-fx-background-color: #2196F3; -fx-text-fill: white;" />
+        <Button text="Зарегистрироваться" onAction="#handleRegister" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
     </HBox>
 
     <!-- Кнопка для создания объявления -->
-    <Button text="Создать объявление" onAction="#createAd"/>
+    <Button text="Создать объявление" onAction="#createAd" style="-fx-background-color: #9C27B0; -fx-text-fill: white;" />
 </VBox>
