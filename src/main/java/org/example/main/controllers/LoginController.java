@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import org.example.main.utils.SceneManager;
 import org.example.main.utils.SessionManager;
 
+
 import java.sql.SQLException;
 
 public class LoginController {
@@ -44,15 +45,20 @@ public class LoginController {
         }
 
         try {
-            int userId = InMemoryDatabase.getInstance().authenticateUser(username, password);
+            int userId = SessionManager.getInstance().authenticateUser(username, password);
+            if (userId != -1) {
+                SessionManager.getInstance().setLoggedInUser(username, userId);
+                SceneManager.getInstance().showScene("index");
+                return;
+            }
 
+            userId = InMemoryDatabase.getInstance().authenticateUser(username, password);
             if (userId == -1) {
                 showAlert("Ошибка", "Неверное имя пользователя или пароль.");
                 return;
             }
 
             SessionManager.getInstance().setLoggedInUser(username, userId);
-
             SceneManager.getInstance().showScene("index");
 
         } catch (SQLException e) {

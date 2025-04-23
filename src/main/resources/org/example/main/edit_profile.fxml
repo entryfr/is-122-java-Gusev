@@ -2,55 +2,41 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-<?import org.example.main.controllers.EditProfileController?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.main.controllers.EditProfileController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
-
-    <!-- Заголовок с кнопкой закрытия -->
+<VBox spacing="20" alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.main.controllers.EditProfileController" style="-fx-background-color: #ffffff; -fx-padding: 30;">
     <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 0 0 20 0;">
-        <Label text="Редактирование профиля" style="-fx-font-size: 24px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
-        <!-- Кнопка закрытия (крестик) -->
-        <Button text="×" onAction="#cancel" style="-fx-font-size: 20px; -fx-background-color: transparent; -fx-text-fill: #F44336;" />
+        <Label text="Редактирование профиля" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;" HBox.hgrow="ALWAYS"/>
+        <Button text="×" onAction="#cancel"
+                style="-fx-font-size: 24px; -fx-background-color: transparent; -fx-text-fill: #666666;"/>
     </HBox>
 
-    <!-- Имя пользователя -->
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <Label text="Имя пользователя:" />
-        <TextField fx:id="usernameField" editable="false" prefWidth="250" />
+    <GridPane hgap="15" vgap="15" style="-fx-padding: 20; -fx-background-color: #f9f9f9; -fx-border-color: #e0e0e0; -fx-border-radius: 4;">
+        <columnConstraints>
+            <ColumnConstraints hgrow="NEVER" minWidth="150"/>
+            <ColumnConstraints hgrow="ALWAYS" minWidth="250"/>
+        </columnConstraints>
+
+        <Label text="Имя пользователя:" style="-fx-text-fill: #666666;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="usernameField" style="-fx-background-color: #ffffff;" GridPane.rowIndex="0" GridPane.columnIndex="1" editable="false"/>
+
+        <Label text="Email:" style="-fx-text-fill: #666666;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="emailField" style="-fx-background-color: #ffffff;" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <Label text="Имя:" style="-fx-text-fill: #666666;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="firstNameField" style="-fx-background-color: #ffffff;" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <Label text="Фамилия:" style="-fx-text-fill: #666666;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="lastNameField" style="-fx-background-color: #ffffff;" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+        <Label text="Телефон:" style="-fx-text-fill: #666666;" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <TextField fx:id="phoneField" style="-fx-background-color: #ffffff;" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <HBox spacing="15" alignment="CENTER">
+        <Button text="Сохранить изменения" onAction="#saveChanges"
+                style="-fx-background-color: #333333; -fx-text-fill: white; -fx-font-weight: bold; -fx-pref-width: 200;"/>
+        <Button text="Отмена" onAction="#cancel"
+                style="-fx-background-color: #e0e0e0; -fx-text-fill: #333333; -fx-pref-width: 120;"/>
     </HBox>
-
-    <!-- Email -->
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <Label text="Email:" />
-        <TextField fx:id="emailField" prefWidth="250" />
-    </HBox>
-
-    <!-- Имя -->
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <Label text="Имя:" />
-        <TextField fx:id="firstNameField" prefWidth="250" />
-    </HBox>
-
-    <!-- Фамилия -->
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <Label text="Фамилия:" />
-        <TextField fx:id="lastNameField" prefWidth="250" />
-    </HBox>
-
-    <!-- Телефон -->
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <Label text="Телефон:" />
-        <TextField fx:id="phoneField" prefWidth="250" />
-    </HBox>
-
-    <!-- Кнопка сохранения -->
-    <Button text="Сохранить изменения" onAction="#saveChanges" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
-
-    <!-- Кнопка отмены -->
-    <Button text="Отмена" onAction="#cancel" style="-fx-background-color: #F44336; -fx-text-fill: white;" />
 </VBox>

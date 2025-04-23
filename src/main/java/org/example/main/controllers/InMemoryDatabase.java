@@ -20,6 +20,7 @@ public class InMemoryDatabase {
             System.out.println("In-memory database created.");
             createTables();
             populateCategories();
+            populateCities();
         } catch (SQLException e) {
             System.err.println("Error creating in-memory database: " + e.getMessage());
         }
@@ -76,7 +77,83 @@ public class InMemoryDatabase {
         executeUpdate(sql);
         System.out.println("Table ALLCITY created.");
     }
+    public void populateCities() throws SQLException {
+        String query = "INSERT OR IGNORE INTO ALLCITY (REGION, MUN_DISTRICT, CITY) VALUES (?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            // Добавляем популярные города России
+            insertCity(stmt, "Москва", "Центральный федеральный округ", "Москва");
+            insertCity(stmt, "Санкт-Петербург", "Северо-Западный федеральный округ", "Санкт-Петербург");
+            insertCity(stmt, "Новосибирск", "Сибирский федеральный округ", "Новосибирск");
+            insertCity(stmt, "Екатеринбург", "Уральский федеральный округ", "Екатеринбург");
+            insertCity(stmt, "Казань", "Приволжский федеральный округ", "Казань");
+            insertCity(stmt, "Нижний Новгород", "Приволжский федеральный округ", "Нижний Новгород");
+            insertCity(stmt, "Челябинск", "Уральский федеральный округ", "Челябинск");
+            insertCity(stmt, "Самара", "Приволжский федеральный округ", "Самара");
+            insertCity(stmt, "Омск", "Сибирский федеральный округ", "Омск");
+            insertCity(stmt, "Ростов-на-Дону", "Южный федеральный округ", "Ростов-на-Дону");
+            insertCity(stmt, "Уфа", "Приволжский федеральный округ", "Уфа");
+            insertCity(stmt, "Красноярск", "Сибирский федеральный округ", "Красноярск");
+            insertCity(stmt, "Пермь", "Приволжский федеральный округ", "Пермь");
+            insertCity(stmt, "Воронеж", "Центральный федеральный округ", "Воронеж");
+            insertCity(stmt, "Волгоград", "Южный федеральный округ", "Волгоград");
+            insertCity(stmt, "Краснодар", "Южный федеральный округ", "Краснодар");
+            insertCity(stmt, "Саратов", "Приволжский федеральный округ", "Саратов");
+            insertCity(stmt, "Тюмень", "Уральский федеральный округ", "Тюмень");
+            insertCity(stmt, "Тольятти", "Приволжский федеральный округ", "Тольятти");
+            insertCity(stmt, "Ижевск", "Приволжский федеральный округ", "Ижевск");
+            insertCity(stmt, "Барнаул", "Сибирский федеральный округ", "Барнаул");
+            insertCity(stmt, "Ульяновск", "Приволжский федеральный округ", "Ульяновск");
+            insertCity(stmt, "Иркутск", "Сибирский федеральный округ", "Иркутск");
+            insertCity(stmt, "Хабаровск", "Дальневосточный федеральный округ", "Хабаровск");
+            insertCity(stmt, "Ярославль", "Центральный федеральный округ", "Ярославль");
+            insertCity(stmt, "Владивосток", "Дальневосточный федеральный округ", "Владивосток");
+            insertCity(stmt, "Махачкала", "Северо-Кавказский федеральный округ", "Махачкала");
+            insertCity(stmt, "Томск", "Сибирский федеральный округ", "Томск");
+            insertCity(stmt, "Оренбург", "Приволжский федеральный округ", "Оренбург");
+            insertCity(stmt, "Кемерово", "Сибирский федеральный округ", "Кемерово");
+            insertCity(stmt, "Новокузнецк", "Сибирский федеральный округ", "Новокузнецк");
+            insertCity(stmt, "Рязань", "Центральный федеральный округ", "Рязань");
+            insertCity(stmt, "Астрахань", "Южный федеральный округ", "Астрахань");
+            insertCity(stmt, "Набережные Челны", "Приволжский федеральный округ", "Набережные Челны");
+            insertCity(stmt, "Пенза", "Приволжский федеральный округ", "Пенза");
+            insertCity(stmt, "Липецк", "Центральный федеральный округ", "Липецк");
+            insertCity(stmt, "Киров", "Приволжский федеральный округ", "Киров");
+            insertCity(stmt, "Чебоксары", "Приволжский федеральный округ", "Чебоксары");
+            insertCity(stmt, "Тула", "Центральный федеральный округ", "Тула");
+            insertCity(stmt, "Калининград", "Северо-Западный федеральный округ", "Калининград");
+            insertCity(stmt, "Балашиха", "Центральный федеральный округ", "Балашиха");
+            insertCity(stmt, "Курск", "Центральный федеральный округ", "Курск");
+            insertCity(stmt, "Севастополь", "Южный федеральный округ", "Севастополь");
+            insertCity(stmt, "Сочи", "Южный федеральный округ", "Сочи");
+            insertCity(stmt, "Ставрополь", "Северо-Кавказский федеральный округ", "Ставрополь");
+            insertCity(stmt, "Улан-Удэ", "Дальневосточный федеральный округ", "Улан-Удэ");
+            insertCity(stmt, "Магнитогорск", "Уральский федеральный округ", "Магнитогорск");
+            insertCity(stmt, "Тверь", "Центральный федеральный округ", "Тверь");
+            insertCity(stmt, "Иваново", "Центральный федеральный округ", "Иваново");
+            insertCity(stmt, "Брянск", "Центральный федеральный округ", "Брянск");
+            stmt.executeBatch();
+            System.out.println("Таблица городов успешно заполнена.");
+        }
+    }
 
+    private void insertCity(PreparedStatement stmt, String city, String region, String munDistrict) throws SQLException {
+        stmt.setString(1, region);
+        stmt.setString(2, munDistrict);
+        stmt.setString(3, city);
+        stmt.addBatch();
+    }
+    // Метод для получения списка городов
+    public List<String> getCities() throws SQLException {
+        List<String> cities = new ArrayList<>();
+        String query = "SELECT DISTINCT CITY FROM ALLCITY ORDER BY CITY";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                cities.add(rs.getString("CITY"));
+            }
+        }
+        return cities;
+    }
     void createTableCategories() {
         String sql = """
             CREATE TABLE IF NOT EXISTS CATEGORIES (
@@ -220,22 +297,39 @@ public class InMemoryDatabase {
         }
     }
 
-    public void close() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-                System.out.println("Database connection closed.");
-            }
-        } catch (SQLException e) {
-            System.err.println("Error closing database connection: " + e.getMessage());
-        }
-    }
     /**
      * Получение текущего подключения к базе данных.
      */
     public Connection getConnection() {
         return connection;
     }
+
+    public int getOtherUserIdInChat(int chatId, int currentUserId) throws SQLException {
+        String query = "SELECT USER1_ID, USER2_ID FROM CHATS WHERE CHAT_ID = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, chatId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int user1 = rs.getInt("USER1_ID");
+                int user2 = rs.getInt("USER2_ID");
+                return user1 == currentUserId ? user2 : user1;
+            }
+            throw new SQLException("Чат не найден");
+        }
+    }
+
+    public String getUsernameById(int userId) throws SQLException {
+        String query = "SELECT USERNAME FROM USERS WHERE USER_ID = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("USERNAME");
+            }
+            throw new SQLException("Пользователь не найден");
+        }
+    }
+
     /**
      * Получение всех активных объявлений для текущего пользователя.
      */
@@ -317,10 +411,65 @@ public class InMemoryDatabase {
             return chatId;
         } catch (SQLException e) {
             System.err.println("Error getting or creating chat: " + e.getMessage());
-            return -1; // Возвращаем -1 в случае ошибки
+            return -1;
         }
     }
+    public List<Ad> getFilteredAds(int currentUserId, String categoryName, Double minPrice, Double maxPrice) throws SQLException {
+        List<Ad> ads = new ArrayList<>();
 
+        StringBuilder query = new StringBuilder("""
+        SELECT AD_ID, TITLE, PRICE, DESCRIPTION, IMAGE_PATH, LOCATION, STATUS, USER_ID, CATEGORY_ID
+        FROM ADS
+        WHERE STATUS = 'active' AND USER_ID != ?
+    """);
+
+        List<Object> params = new ArrayList<>();
+        params.add(currentUserId);
+
+        if (categoryName != null) {
+            query.append(" AND CATEGORY_ID = (SELECT CATEGORY_ID FROM CATEGORIES WHERE CATEGORY_NAME = ?)");
+            params.add(categoryName);
+        }
+
+        if (minPrice != null) {
+            query.append(" AND PRICE >= ?");
+            params.add(minPrice);
+        }
+
+        if (maxPrice != null) {
+            query.append(" AND PRICE <= ?");
+            params.add(maxPrice);
+        }
+
+        try (PreparedStatement stmt = connection.prepareStatement(query.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                Object param = params.get(i);
+                if (param instanceof String) {
+                    stmt.setString(i + 1, (String) param);
+                } else if (param instanceof Integer) {
+                    stmt.setInt(i + 1, (Integer) param);
+                } else if (param instanceof Double) {
+                    stmt.setDouble(i + 1, (Double) param);
+                }
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Ad ad = new Ad();
+                ad.setAdId(rs.getInt("AD_ID"));
+                ad.setTitle(rs.getString("TITLE"));
+                ad.setPrice(rs.getDouble("PRICE"));
+                ad.setDescription(rs.getString("DESCRIPTION"));
+                ad.setImage(rs.getBytes("IMAGE_PATH"));
+                ad.setLocation(rs.getString("LOCATION"));
+                ad.setStatus(rs.getString("STATUS"));
+                ad.setSellerId(rs.getInt("USER_ID"));
+                ads.add(ad);
+            }
+        }
+
+        return ads;
+    }
     /**
      * Генерация уникального ID чата.
      */
@@ -401,16 +550,7 @@ public class InMemoryDatabase {
         }
     }
 
-    /**
-     * Получение следующего ID пользователя.
-     */
-    public int getNextUserId() throws SQLException {
-        String query = "SELECT COALESCE(MAX(USER_ID), 0) + 1 FROM USERS";
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-            return rs.next() ? rs.getInt(1) : 1;
-        }
-    }
+
 
     /**
      * Добавление нового пользователя.
@@ -576,18 +716,7 @@ public class InMemoryDatabase {
             return rowsUpdated > 0;
         }
     }
-    public int getSellerIdForAd(int adId) throws Exception {
-        String query = "SELECT USER_ID FROM ADS WHERE AD_ID = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, adId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("USER_ID");
-            } else {
-                throw new IllegalArgumentException("Объявление с ID " + adId + " не найдено.");
-            }
-        }
-    }
+
     public void addMessage(int chatId, int senderId, String message) throws Exception {
         String query = "INSERT INTO MESSAGES (MESSAGE_ID, CHAT_ID, SENDER_ID, MESSAGE_TEXT, SENT_TIME) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -655,7 +784,7 @@ public class InMemoryDatabase {
         }
         String adminQuery = """
         INSERT OR IGNORE INTO USERS
-        (USERNAME, PASSWORD_HASH, IS_ADMIN, EMAIL) 
+        (USERNAME, PASSWORD_HASH, IS_ADMIN, EMAIL)
         VALUES (?, ?, ?, ?)
     """;
         try (PreparedStatement stmt = connection.prepareStatement(adminQuery)) {
@@ -698,7 +827,6 @@ public class InMemoryDatabase {
                 message.setSenderName(rs.getString("USERNAME"));
                 message.setMessageText(rs.getString("MESSAGE_TEXT"));
 
-                // Преобразуем TIMESTAMP из базы данных в LocalDateTime
                 Timestamp timestamp = rs.getTimestamp("SENT_TIME");
                 if (timestamp != null) {
                     message.setSentTime(timestamp.toLocalDateTime());
@@ -709,23 +837,6 @@ public class InMemoryDatabase {
         }
         return messages;
     }
-    /**
-     * Проверка существования чата между двумя пользователями.
-     */
-    public boolean chatExists(int user1Id, int user2Id) throws SQLException {
-        String query = "SELECT COUNT(*) FROM CHATS WHERE (USER1_ID = ? AND USER2_ID = ?) OR (USER1_ID = ? AND USER2_ID = ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, user1Id);
-            stmt.setInt(2, user2Id);
-            stmt.setInt(3, user2Id);
-            stmt.setInt(4, user1Id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-        }
-        return false;
-    }
 
     public void updateLastMessage(int chatId, String lastMessage) throws Exception {
         String query = "UPDATE CHATS SET LAST_MESSAGE = ?, LAST_MESSAGE_TIME = CURRENT_TIMESTAMP WHERE CHAT_ID = ?";
@@ -735,7 +846,14 @@ public class InMemoryDatabase {
             stmt.executeUpdate();
         }
     }
-
+    public boolean adExists(int adId) throws SQLException {
+        String query = "SELECT COUNT(*) FROM ADS WHERE AD_ID = ? AND STATUS = 'active'";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, adId);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() && rs.getInt(1) > 0;
+        }
+    }
     public List<String> loadCategories() throws Exception {
         List<String> categories = new ArrayList<>();
         String query = "SELECT CATEGORY_NAME FROM CATEGORIES";
@@ -869,7 +987,33 @@ public class InMemoryDatabase {
             }
         } catch (SQLException e) {
             System.err.println("Error fetching price for ad: " + e.getMessage());
-            return -1; // Возвращаем -1 в случае ошибки
+            return -1;
         }
+    }
+
+    public List<Ad> getUserAds(int userId) throws SQLException {
+        List<Ad> ads = new ArrayList<>();
+        String query = """
+        SELECT AD_ID, TITLE, PRICE, DESCRIPTION, LOCATION, STATUS, PUBLICATION_DATE
+        FROM ADS
+        WHERE USER_ID = ?
+        ORDER BY PUBLICATION_DATE DESC
+    """;
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Ad ad = new Ad();
+                ad.setAdId(rs.getInt("AD_ID"));
+                ad.setTitle(rs.getString("TITLE"));
+                ad.setPrice(rs.getDouble("PRICE"));
+                ad.setDescription(rs.getString("DESCRIPTION"));
+                ad.setLocation(rs.getString("LOCATION"));
+                ad.setStatus(rs.getString("STATUS"));
+                ad.setPublicationDate(rs.getTimestamp("PUBLICATION_DATE").toLocalDateTime());
+                ads.add(ad);
+            }
+        }
+        return ads;
     }
 }

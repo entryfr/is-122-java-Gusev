@@ -16,69 +16,77 @@ public class BasketController {
     @FXML
     private Label totalPriceLabel;
 
-    // Экземпляры зависимостей
-    private final InMemoryDatabase inMemoryDatabase = new InMemoryDatabase();
+    private final InMemoryDatabase inMemoryDatabase = InMemoryDatabase.getInstance();
     private final SessionManager sessionManager = SessionManager.getInstance();
 
-    /**
-     * Инициализация контроллера.
-     */
     @FXML
     public void initialize() {
+        basketList.setCellFactory(param -> new ListCell<Ad>() {
+            @Override
+            protected void updateItem(Ad ad, boolean empty) {
+                super.updateItem(ad, empty);
+                if (empty || ad == null) {
+                    setText(null);
+                } else {
+                    setText(String.format("%s - %.2f руб.", ad.getTitle(), ad.getPrice()));
+                }
+            }
+        });
+
         loadBasketItems();
     }
 
-    /**
-     * Загрузка товаров в корзину.
-     */
     private void loadBasketItems() {
         try {
             List<Ad> basketItems = inMemoryDatabase.getBasketItems(sessionManager.getLoggedInUserId());
-            basketList.getItems().clear();
-            basketList.getItems().addAll(basketItems);
 
-            double totalPrice = basketItems.stream().mapToDouble(Ad::getPrice).sum();
-            totalPriceLabel.setText(String.format("%.2f руб.", totalPrice));
+            basketList.getItems().setAll(basketItems);
+
+            updateTotalPrice(basketItems);
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Ошибка", "Не удалось загрузить товары из корзины.");
         }
     }
 
-    /**
-     * Очищает корзину.
-     */
+    private void updateTotalPrice(List<Ad> items) {
+        double totalPrice = items.stream()
+                .mapToDouble(Ad::getPrice)
+                .sum();
+        totalPriceLabel.setText(String.format("%.2f руб.", totalPrice));
+    }
+
     @FXML
     private void handleClearBasket() {
         try {
             inMemoryDatabase.clearBasket(sessionManager.getLoggedInUserId());
-            loadBasketItems();
+            basketList.getItems().clear();
+            totalPriceLabel.setText("0.00 руб.");
+            showAlert("Успех", "Корзина очищена.");
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Ошибка", "Не удалось очистить корзину.");
         }
     }
 
-    /**
-     * Обрабатывает покупку товаров из корзины.
-     */
     @FXML
     private void handleBuy() {
         try {
-            for (Ad ad : basketList.getItems()) {
+            List<Ad> items = basketList.getItems();
+            if (items.isEmpty()) {
+                showAlert("Ошибка", "Корзина пуста.");
+                return;
+            }
+
+            for (Ad ad : items) {
                 if (ad.getSellerId() == sessionManager.getLoggedInUserId()) {
                     showAlert("Ошибка", "Вы не можете купить свой собственный товар: " + ad.getTitle());
                     continue;
                 }
 
-                // Обновляем статус объявления
                 inMemoryDatabase.updateAdStatus(ad.getAdId());
-
-                // Добавляем запись о покупке
                 int purchaseId = generateUniquePurchaseId(ad.getAdId(), sessionManager.getLoggedInUserId());
                 inMemoryDatabase.addPurchaseRecord(purchaseId, sessionManager.getLoggedInUserId(), ad);
-
-                // Удаляем товар из корзины
                 inMemoryDatabase.removeFromBasket(sessionManager.getLoggedInUserId(), ad.getAdId());
             }
 
@@ -90,17 +98,21 @@ public class BasketController {
         }
     }
 
-    /**
-     * Генерирует уникальный числовой ID для покупки.
-     */
+    @FXML
+    private void handleBackToIndex() {
+        try {
+            SceneManager.getInstance().showScene("index");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Ошибка", "Не удалось вернуться на главную страницу.");
+        }
+    }
+
     private int generateUniquePurchaseId(int adId, int userId) {
         long timestamp = System.currentTimeMillis();
         return Math.abs((adId + userId + (int) (timestamp % 1000000)));
     }
 
-    /**
-     * Отображает диалоговое окно с сообщением.
-     */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);

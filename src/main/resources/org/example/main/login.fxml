@@ -3,11 +3,31 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.main.controllers.LoginController">
-    <Button text="×" onAction="#cancel" style="-fx-font-size: 20px; -fx-background-color: transparent; -fx-text-fill: #F44336;" />
-    <Label text="Вход" style="-fx-font-size: 24px;"/>
-    <TextField fx:id="usernameField" promptText="Имя пользователя" />
-    <PasswordField fx:id="passwordField" promptText="Пароль" />
-    <Button text="Войти" onAction="#handleLogin" />
-    <Button text="Отмена" onAction="#cancel" style="-fx-background-color: #F44336; -fx-text-fill: white;" />
+<VBox spacing="20" alignment="CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.main.controllers.LoginController" style="-fx-background-color: #ffffff; -fx-padding: 40;">
+    <HBox alignment="TOP_RIGHT" style="-fx-padding: 0 0 20 0;">
+        <Button text="×" onAction="#cancel"
+                style="-fx-font-size: 24px; -fx-background-color: transparent; -fx-text-fill: #666666;"/>
+    </HBox>
+
+    <Label text="Вход" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+
+    <VBox spacing="15" style="-fx-pref-width: 300;">
+        <VBox spacing="5">
+            <Label text="Имя пользователя" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
+            <TextField fx:id="usernameField" style="-fx-pref-width: 300;"/>
+        </VBox>
+
+        <VBox spacing="5">
+            <Label text="Пароль" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
+            <PasswordField fx:id="passwordField" style="-fx-pref-width: 300;"/>
+        </VBox>
+    </VBox>
+
+    <HBox spacing="15" alignment="CENTER">
+        <Button text="Войти" onAction="#handleLogin"
+                style="-fx-background-color: #333333; -fx-text-fill: white; -fx-font-weight: bold; -fx-pref-width: 120;"/>
+        <Button text="Отмена" onAction="#cancel"
+                style="-fx-background-color: #e0e0e0; -fx-text-fill: #333333; -fx-pref-width: 120;"/>
+    </HBox>
 </VBox>

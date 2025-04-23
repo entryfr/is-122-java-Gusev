@@ -15,3 +15,53 @@
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
 }
+/* Общие стили для всех элементов */
+.root {
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-base: #ffffff;
+    -fx-background: #ffffff;
+}
+
+.label {
+    -fx-text-fill: #333333;
+}
+
+.text-field, .password-field, .text-area, .combo-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 4;
+    -fx-padding: 8;
+    -fx-font-size: 14px;
+}
+
+.button {
+    -fx-background-color: #f5f5f5;
+    -fx-text-fill: #333333;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 4;
+    -fx-padding: 8 16;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #e0e0e0;
+}
+
+.list-view, .list-cell {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e0e0e0;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: #f5f5f5;
+    -fx-text-fill: #333333;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}

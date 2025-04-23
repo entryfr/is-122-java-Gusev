@@ -16,6 +16,7 @@
     <HBox spacing="10" alignment="CENTER_LEFT">
         <TextField fx:id="searchField" promptText="Поиск товаров..." HBox.hgrow="ALWAYS" />
         <Button text="Поиск" onAction="#handleSearch" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
+        <Button fx:id="filterButton" text="Фильтры" onAction="#openFiltersDialog"/>
     </HBox>
 
     <!-- Список найденных объявлений -->

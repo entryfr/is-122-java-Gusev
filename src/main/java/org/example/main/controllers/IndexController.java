@@ -7,8 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
+
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.main.models.Ad;
 import org.example.main.utils.SceneManager;
@@ -21,6 +21,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class IndexController {
+    @FXML
+    private Button filterButton;
     @FXML
     private Button adminButton;
     @FXML
@@ -59,36 +61,6 @@ public class IndexController {
         updateUIBasedOnAuthStatus();
         loadAds();
 
-        adsList.setCellFactory(param -> new ListCell<Ad>() {
-            @Override
-            protected void updateItem(Ad item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setGraphic(null);
-                } else {
-                    Text titleText = new Text(item.getTitle());
-                    Text priceText = new Text(String.format("%.2f руб.", item.getPrice()));
-                    Text locationText = new Text(item.getLocation());
-
-                    Button buyButton = new Button("Купить");
-                    buyButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
-                    buyButton.setOnAction(event -> handleBuy(item.getAdId()));
-
-                    Button messageButton = new Button("Написать продавцу");
-                    messageButton.setOnAction(event -> openChatWithSeller(item.getSellerId()));
-
-                    if (item.getSellerId() == sessionManager.getLoggedInUserId()) {
-                        titleText.setFill(Color.RED);
-                    } else {
-                        titleText.setFill(Color.BLACK);
-                    }
-
-                    HBox hbox = new HBox(10, titleText, priceText, locationText, buyButton, messageButton);
-                    hbox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-                    setGraphic(hbox);
-                }
-            }
-        });
     }
 
     private void updateUIBasedOnAuthStatus() {
@@ -328,13 +300,6 @@ public class IndexController {
     }
 
     /**
-     * Обновление интерфейса в зависимости от состояния авторизации.
-     */
-    /**
-     * Обновление интерфейса в зависимости от состояния авторизации.
-     */
-
-    /**
      * Отображение диалогового окна с сообщением.
      */
     private void showAlert(String title, String message) {
@@ -345,6 +310,44 @@ public class IndexController {
         alert.showAndWait();
     }
 
+    @FXML
+    private void openFiltersDialog() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/main/filters.fxml"));
+            Parent root = loader.load();
+
+            FiltersController controller = loader.getController();
+            controller.setOnApplyCallback(this::applyFilters);
+            controller.setOnResetCallback(this::loadAds);
+
+            Stage stage = new Stage();
+            stage.setTitle("Фильтры объявлений");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Ошибка", "Не удалось открыть фильтры");
+        }
+    }
+
+    // Добавим метод для применения фильтров
+    private void applyFilters(FiltersController.FilterParams params) {
+        try {
+            int userId = sessionManager.getLoggedInUserId();
+            List<Ad> ads = inMemoryDatabase.getFilteredAds(
+                    userId,
+                    params.category,
+                    params.minPrice,
+                    params.maxPrice
+            );
+
+            adsList.getItems().clear();
+            adsList.getItems().addAll(ads);
+        } catch (Exception e) {
+            showAlert("Ошибка", "Не удалось применить фильтры: " + e.getMessage());
+        }
+    }
     /**
      * Обработка двойного клика по объявлению.
      */
