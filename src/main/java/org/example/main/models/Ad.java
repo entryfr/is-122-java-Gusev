@@ -1,24 +1,26 @@
 package org.example.main.models;
 
 import javafx.scene.image.Image;
+import java.time.LocalDateTime;
 
 public class Ad {
     private int adId;
-    private int sellerId; // ID продавца (пользователя)
-
+    private int sellerId;
     private String title;
     private int categoryId;
     private double price;
     private String description;
     private byte[] image;
     private String location;
-    private String status; // Статус объявления: "active", "sold"
-
+    private String status;
+    private LocalDateTime publicationDate; // Добавляем новое поле
 
     public Ad() {}
 
-
-    public Ad(int adId, int sellerId, String title, int categoryId, double price, String description, byte[] image, String location, String status) {
+    // Обновляем конструктор
+    public Ad(int adId, int sellerId, String title, int categoryId, double price,
+              String description, byte[] image, String location, String status,
+              LocalDateTime publicationDate) {
         this.adId = adId;
         this.sellerId = sellerId;
         this.title = title;
@@ -28,8 +30,17 @@ public class Ad {
         this.image = image;
         this.location = location;
         this.status = status;
+        this.publicationDate = publicationDate;
     }
 
+    // Добавляем геттер и сеттер для publicationDate
+    public LocalDateTime getPublicationDate() {
+        return publicationDate;
+    }
+
+    public void setPublicationDate(LocalDateTime publicationDate) {
+        this.publicationDate = publicationDate;
+    }
     /**
      * Геттеры и сеттеры.
      */

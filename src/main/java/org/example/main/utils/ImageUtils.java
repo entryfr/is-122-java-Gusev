@@ -23,33 +23,6 @@ public class ImageUtils {
     }
 
     /**
-     * Сохраняет изображение в указанной директории с уникальным именем файла.
-     *
-     * @param imageData массив байтов, представляющий изображение
-     * @param uploadDir путь к директории для сохранения изображения
-     * @param originalFileName оригинальное имя файла (для определения расширения)
-     * @return имя сохранённого файла
-     * @throws IOException если произошла ошибка при записи файла
-     */
-    public static String saveImage(byte[] imageData, String uploadDir, String originalFileName) throws IOException {
-        // Создаём объект File для директории
-        File uploadDirectory = new File(uploadDir);
-        if (!uploadDirectory.exists()) {
-            if (!uploadDirectory.mkdirs()) {
-                throw new IOException("Не удалось создать директорию: " + uploadDir);
-            }
-        }
-
-        String extension = getFileExtension(originalFileName);
-        String fileName = UUID.randomUUID().toString() + "." + extension;
-
-        File outputFile = new File(uploadDirectory, fileName);
-        Files.write(outputFile.toPath(), imageData);
-
-        return fileName;
-    }
-
-    /**
      * Получает расширение файла из его имени.
      *
      * @param fileName имя файла

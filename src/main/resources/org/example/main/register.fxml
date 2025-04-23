@@ -3,13 +3,39 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.main.controllers.RegisterController">
-    <Label text="Регистрация" style="-fx-font-size: 24px;"/>
-    <TextField fx:id="usernameField" promptText="Имя пользователя" />
-    <PasswordField fx:id="passwordField" promptText="Пароль" />
-    <TextField fx:id="emailField" promptText="Email" />
-    <TextField fx:id="firstNameField" promptText="Имя" />
-    <TextField fx:id="lastNameField" promptText="Фамилия" />
-    <TextField fx:id="phoneField" promptText="Телефон" />
-    <Button text="Зарегистрироваться" onAction="#handleRegister" />
+<VBox spacing="15" alignment="CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.main.controllers.RegisterController" style="-fx-background-color: #ffffff; -fx-padding: 30;">
+    <Label text="Регистрация" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+
+    <GridPane hgap="10" vgap="15" style="-fx-padding: 20; -fx-background-color: #ffffff;">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="100"/>
+            <ColumnConstraints hgrow="ALWAYS" minWidth="200"/>
+        </columnConstraints>
+
+        <Label text="Имя пользователя:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="usernameField" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-pref-width: 250;"/>
+
+        <Label text="Пароль:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <PasswordField fx:id="passwordField" GridPane.rowIndex="1" GridPane.columnIndex="1" style="-fx-pref-width: 250;"/>
+
+        <Label text="Email:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="emailField" GridPane.rowIndex="2" GridPane.columnIndex="1" style="-fx-pref-width: 250;"/>
+
+        <Label text="Имя:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="firstNameField" GridPane.rowIndex="3" GridPane.columnIndex="1" style="-fx-pref-width: 250;"/>
+
+        <Label text="Фамилия:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <TextField fx:id="lastNameField" GridPane.rowIndex="4" GridPane.columnIndex="1" style="-fx-pref-width: 250;"/>
+
+        <Label text="Телефон:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <TextField fx:id="phoneField" GridPane.rowIndex="5" GridPane.columnIndex="1" style="-fx-pref-width: 250;"/>
+    </GridPane>
+
+    <HBox spacing="15" alignment="CENTER">
+        <Button text="Зарегистрироваться" onAction="#handleRegister"
+                style="-fx-background-color: #333333; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        <Button text="Отмена" onAction="#cancel"
+                style="-fx-background-color: #e0e0e0; -fx-text-fill: #333333;"/>
+    </HBox>
 </VBox>

@@ -45,7 +45,6 @@ public class RegisterController {
                 return;
             }
 
-            // Добавляем пользователя в БД
             int userId = inMemoryDatabase.addUser(
                     username,
                     email,
@@ -79,5 +78,14 @@ public class RegisterController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+    @FXML
+    private void cancel() {
+        try {
+            SceneManager.getInstance().showScene("index");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Ошибка", "Не удалось вернуться на главную страницу.");
+        }
     }
 }

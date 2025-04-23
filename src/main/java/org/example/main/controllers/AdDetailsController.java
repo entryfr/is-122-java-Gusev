@@ -12,34 +12,23 @@ import java.io.ByteArrayInputStream;
 
 public class AdDetailsController {
 
-    @FXML
-    private Label titleLabel;
-
-    @FXML
-    private Label priceLabel;
-
-    @FXML
-    private Label descriptionLabel;
-
-    @FXML
-    private Label locationLabel;
-
-    @FXML
-    private ImageView imageView;
-
-    @FXML
-    private Button buyButton;
-
-    @FXML
-    private Button messageButton;
+    @FXML private Label titleLabel;
+    @FXML private Label priceLabel;
+    @FXML private TextArea descriptionField;
+    @FXML private Label locationLabel;
+    @FXML private ImageView imageView;
+    @FXML private Button buyButton;
+    @FXML private Button messageButton;
 
     private int adId;
 
-    /**
-     * Инициализация контроллера.
-     */
     @FXML
     public void initialize() {
+        if (buyButton == null || messageButton == null) {
+            System.err.println("Ошибка: Не все FXML-элементы были загружены!");
+            return;
+        }
+
         adId = (int) SceneManager.getInstance().getPassedParameter("adId", -1);
         if (adId > 0) {
             loadAdDetails(adId);
@@ -48,9 +37,6 @@ public class AdDetailsController {
         }
     }
 
-    /**
-     * Загрузка данных объявления.
-     */
     private void loadAdDetails(int adId) {
         try {
             InMemoryDatabase db = InMemoryDatabase.getInstance();
@@ -59,7 +45,7 @@ public class AdDetailsController {
             if (ad != null) {
                 titleLabel.setText(ad.getTitle());
                 priceLabel.setText(String.format("%.2f руб.", ad.getPrice()));
-                descriptionLabel.setText(ad.getDescription());
+                descriptionField.setText(ad.getDescription());
                 locationLabel.setText(ad.getLocation());
 
                 if (ad.getImage() != null) {
@@ -82,6 +68,16 @@ public class AdDetailsController {
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Ошибка", "Не удалось загрузить данные объявления.");
+        }
+    }
+
+    @FXML
+    private void goBack() {
+        try {
+            SceneManager.getInstance().showScene("index");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Ошибка", "Не удалось вернуться на предыдущую страницу.");
         }
     }
 
