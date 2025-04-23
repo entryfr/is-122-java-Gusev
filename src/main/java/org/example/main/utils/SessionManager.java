@@ -1,154 +1,201 @@
 package org.example.main.utils;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import org.example.main.controllers.InMemoryDatabase;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.logging.Logger;
 
 public class SessionManager {
-
+    private final Connection connection;
+    private final InMemoryDatabase inMemoryDatabase;
+    private static SessionManager instance;
+    private int loggedInUserId = -1;
+    public void setLoggedInUserId(int userId) {
+        this.loggedInUserId = userId;
+    }
 
     private static final Logger logger = Logger.getLogger(SessionManager.class.getName());
 
-    private static final ConcurrentHashMap<String, Object> sessionData = new ConcurrentHashMap<>();
-
-    private static final CopyOnWriteArrayList<CartItem> basket = new CopyOnWriteArrayList<>();
-    public static String getLoggedInUsername() {
-        return (String) sessionData.get("username");
+    public SessionManager(InMemoryDatabase inMemoryDatabase) throws SQLException {
+        this.inMemoryDatabase = inMemoryDatabase;
+        this.connection = inMemoryDatabase.getConnection();
     }
+
+    public static synchronized SessionManager getInstance() {
+        if (instance == null) {
+            try {
+                InMemoryDatabase db = new InMemoryDatabase();
+                instance = new SessionManager(db);
+            } catch (SQLException e) {
+                System.err.println("Ошибка при создании SessionManager: " + e.getMessage());
+            }
+        }
+        return instance;
+    }
+
     /**
      * Устанавливает данные авторизованного пользователя.
-     *
-     * @param username Имя пользователя
-     * @param userId   ID пользователя
      */
-    public static void setLoggedInUser(String username, int userId) {
-        sessionData.put("username", username);
-        sessionData.put("userId", userId);
-        logger.info("Пользователь " + username + " успешно авторизован.");
+    public void setLoggedInUser(String username, int userId) {
+        try {
+            inMemoryDatabase.setLoggedInUser(username, userId);
+            logger.info("Пользователь " + username + " успешно авторизован.");
+        } catch (SQLException e) {
+            logger.severe("Ошибка при установке данных пользователя: " + e.getMessage());
+        }
+    }
+    private boolean isAdmin = false;
+
+    public void setLoggedInUser(String username, int userId, boolean isAdmin) {
+        this.loggedInUserId = userId;
+        this.isAdmin = isAdmin;
+        try {
+            inMemoryDatabase.setLoggedInUser(username, userId);
+        } catch (SQLException e) {
+            logger.severe("Ошибка при установке данных пользователя: " + e.getMessage());
+        }
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+    /**
+     * Аутентификация пользователя.
+     */
+    public int authenticateUser(String username, String password) {
+        String query = "SELECT USER_ID, IS_ADMIN FROM USERS WHERE USERNAME = ? AND PASSWORD_HASH = ?";
+        try (var stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+
+            try (var rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int userId = rs.getInt("USER_ID");
+                    boolean isAdmin = rs.getBoolean("IS_ADMIN");
+                    setLoggedInUser(username, userId, isAdmin);
+                    return userId;
+                }
+            }
+        } catch (SQLException e) {
+            logger.severe("Ошибка аутентификации: " + e.getMessage());
+        }
+        return -1;
     }
 
     /**
-     * Проверяет, авторизован ли пользователь.
-     *
-     * @return true, если пользователь авторизован, иначе false
+     * Проверка, авторизован ли пользователь.
      */
-    public static boolean isLoggedIn() {
-        return sessionData.containsKey("username") && sessionData.containsKey("userId");
+    public boolean isLoggedIn() {
+        try {
+            return inMemoryDatabase.isLoggedIn();
+        } catch (SQLException e) {
+            logger.severe("Ошибка проверки авторизации: " + e.getMessage());
+            return false;
+        }
     }
 
     /**
-     * Возвращает имя авторизованного пользователя.
-     *
-     * @return Имя пользователя или null, если пользователь не авторизован
+     * Получение имени авторизованного пользователя.
      */
-    public static String getLoggedInUser() {
-        return (String) sessionData.get("username");
+    public String getLoggedInUsername() {
+        try {
+            return inMemoryDatabase.getLoggedInUsername();
+        } catch (SQLException e) {
+            logger.severe("Ошибка получения имени: " + e.getMessage());
+            return null;
+        }
     }
 
     /**
-     * Возвращает ID авторизованного пользователя.
-     *
-     * @return ID пользователя или -1, если пользователь не авторизован
+     * Получение ID авторизованного пользователя.
      */
-    public static int getLoggedInUserId() {
-        return isLoggedIn() ? (int) sessionData.get("userId") : -1;
+    public int getLoggedInUserId() {
+        try {
+            return inMemoryDatabase.getLoggedInUserId();
+        } catch (SQLException e) {
+            logger.severe("Ошибка получения ID: " + e.getMessage());
+            return -1;
+        }
     }
 
     /**
-     * Выполняет выход пользователя.
+     * Выход пользователя.
      */
-    public static void logout() {
-        sessionData.clear();
-        basket.clear();
-        logger.info("Пользователь вышел из системы.");
+    public void logout() {
+        try {
+            inMemoryDatabase.logout();
+            logger.info("Пользователь вышел из системы.");
+        } catch (SQLException e) {
+            logger.severe("Ошибка выхода: " + e.getMessage());
+        }
     }
 
     /**
-     * Добавляет товар в корзину.
-     *
-     * @param title Название товара
-     * @param price Цена товара
+     * Удаляет товар из корзины по ID товара.
      */
-    public static void addToBasket(String title, double price) {
-        CartItem item = new CartItem(title, price);
-        basket.add(item);
-        logger.info("Товар добавлен в корзину: " + item);
-    }
-
-    /**
-     * Возвращает список всех товаров в корзине.
-     *
-     * @return Список товаров в корзине
-     */
-    public static List<CartItem> getBasketItems() {
-        return basket;
-    }
-
-    /**
-     * Удаляет товар из корзины по названию.
-     *
-     * @param title Название товара
-     */
-    public static void removeFromBasket(String title) {
-        basket.removeIf(item -> title.equals(item.getTitle()));
-        logger.info("Товар удален из корзины: " + title);
+    public void removeFromBasket(int adId) {
+        try {
+            int userId = getLoggedInUserId();
+            if (userId == -1) {
+                logger.warning("Пользователь не авторизован. Невозможно удалить товар из корзины.");
+                return;
+            }
+            inMemoryDatabase.removeFromBasket(userId, adId);
+            logger.info("Товар с ID " + adId + " удален из корзины.");
+        } catch (SQLException e) {
+            logger.severe("Ошибка при удалении товара из корзины: " + e.getMessage());
+        }
     }
 
     /**
      * Очищает корзину.
      */
-    public static void clearBasket() {
-        basket.clear();
-        logger.info("Корзина очищена.");
+    public void clearBasket() {
+        try {
+            int userId = getLoggedInUserId();
+            if (userId == -1) {
+                logger.warning("Пользователь не авторизован. Невозможно очистить корзину.");
+                return;
+            }
+            inMemoryDatabase.clearBasket(userId);
+            logger.info("Корзина очищена.");
+        } catch (SQLException e) {
+            logger.severe("Ошибка при очистке корзины: " + e.getMessage());
+        }
     }
 
     /**
      * Возвращает общую стоимость товаров в корзине.
-     *
-     * @return Общая стоимость
      */
-    public static double getTotalPrice() {
-        return basket.stream()
-                .mapToDouble(CartItem::getPrice)
-                .sum();
+    public double getTotalPrice() {
+        try {
+            int userId = getLoggedInUserId();
+            if (userId == -1) {
+                logger.warning("Пользователь не авторизован. Невозможно получить общую стоимость.");
+                return 0.0;
+            }
+            return inMemoryDatabase.getTotalPrice(userId);
+        } catch (SQLException e) {
+            logger.severe("Ошибка при получении общей стоимости товаров: " + e.getMessage());
+            return 0.0;
+        }
     }
 
     /**
      * Возвращает количество товаров в корзине.
-     *
-     * @return Количество товаров
      */
-    public static int getBasketItemCount() {
-        return basket.size();
-    }
-
-    /**
-     * Класс для представления товара в корзине.
-     */
-    public static class CartItem {
-        private final String title;
-        private final double price;
-
-        public CartItem(String title, double price) {
-            this.title = title;
-            this.price = price;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public double getPrice() {
-            return price;
-        }
-
-        @Override
-        public String toString() {
-            return "CartItem{" +
-                    "title='" + title + '\'' +
-                    ", price=" + price +
-                    '}';
+    public int getBasketItemCount() {
+        try {
+            int userId = getLoggedInUserId();
+            if (userId == -1) {
+                logger.warning("Пользователь не авторизован. Невозможно получить количество товаров.");
+                return 0;
+            }
+            return inMemoryDatabase.getBasketItemCount(userId);
+        } catch (SQLException e) {
+            logger.severe("Ошибка при получении количества товаров: " + e.getMessage());
+            return 0;
         }
     }
 }

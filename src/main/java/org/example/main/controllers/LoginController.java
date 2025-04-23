@@ -4,15 +4,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import org.example.main.utils.Database;
+import org.example.main.utils.SceneManager;
 import org.example.main.utils.SessionManager;
-import javafx.stage.Stage;
-import javafx.scene.Scene;
-import javafx.fxml.FXMLLoader;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class LoginController {
 
@@ -22,63 +17,58 @@ public class LoginController {
     @FXML
     private PasswordField passwordField;
 
+    /**
+     * Обработка отмены входа.
+     */
+    @FXML
+    private void cancel() {
+        try {
+            SceneManager.getInstance().showScene("index");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Ошибка", "Не удалось вернуться на главную страницу.");
+        }
+    }
+
+    /**
+     * Обработка входа пользователя.
+     */
     @FXML
     private void handleLogin() {
-        String username = usernameField.getText();
-        String password = passwordField.getText();
+        String username = usernameField.getText().trim();
+        String password = passwordField.getText().trim();
 
         if (username.isEmpty() || password.isEmpty()) {
-            showAlert("Ошибка", "Заполните все поля.");
+            showAlert("Ошибка", "Введите имя пользователя и пароль.");
             return;
         }
 
-        try (Connection conn = Database.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("SELECT USER_ID, PASSWORD_HASH FROM USERS WHERE USERNAME = ?");
-            stmt.setString(1, username);
-            ResultSet rs = stmt.executeQuery();
+        try {
+            int userId = InMemoryDatabase.getInstance().authenticateUser(username, password);
 
-            if (rs.next() && rs.getString("PASSWORD_HASH").equals(password)) {
-                int userId = rs.getInt("USER_ID");
-                SessionManager.setLoggedInUser(username, userId);
-                navigateToMainPage();
-            } else {
+            if (userId == -1) {
                 showAlert("Ошибка", "Неверное имя пользователя или пароль.");
+                return;
             }
+
+            SessionManager.getInstance().setLoggedInUser(username, userId);
+
+            SceneManager.getInstance().showScene("index");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Ошибка базы данных", "Не удалось выполнить вход: " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Ошибка", "Не удалось войти.");
+            showAlert("Ошибка", "Не удалось войти: " + e.getMessage());
         }
     }
 
-    @FXML
-    private void handleRegister() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/main/register.fxml"));
-            Scene scene = new Scene(loader.load());
-            Stage stage = (Stage) usernameField.getScene().getWindow();
-            stage.setScene(scene);
-            stage.setTitle("Регистрация");
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void navigateToMainPage() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/main/index.fxml"));
-            Scene scene = new Scene(loader.load());
-            Stage stage = (Stage) usernameField.getScene().getWindow();
-            stage.setScene(scene);
-            stage.setTitle("Главная страница");
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+    /**
+     * Отображение диалогового окна с сообщением.
+     */
     private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);

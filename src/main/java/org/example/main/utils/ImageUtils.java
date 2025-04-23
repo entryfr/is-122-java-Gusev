@@ -40,11 +40,9 @@ public class ImageUtils {
             }
         }
 
-        // Генерируем уникальное имя файла
         String extension = getFileExtension(originalFileName);
         String fileName = UUID.randomUUID().toString() + "." + extension;
 
-        // Создаём файл для сохранения
         File outputFile = new File(uploadDirectory, fileName);
         Files.write(outputFile.toPath(), imageData);
 
@@ -59,11 +57,11 @@ public class ImageUtils {
      */
     private static String getFileExtension(String fileName) {
         if (fileName == null || fileName.isEmpty()) {
-            return "png"; // По умолчанию используем PNG
+            return "png";
         }
         int lastIndex = fileName.lastIndexOf('.');
         if (lastIndex == -1) {
-            return "png"; // Если расширение отсутствует, используем PNG
+            return "png";
         }
         return fileName.substring(lastIndex + 1).toLowerCase();
     }

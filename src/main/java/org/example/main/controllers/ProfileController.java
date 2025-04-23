@@ -3,13 +3,8 @@ package org.example.main.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.example.main.models.User;
-import org.example.main.utils.Database;
 import org.example.main.utils.SceneManager;
 import org.example.main.utils.SessionManager;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 public class ProfileController {
 
@@ -31,6 +26,13 @@ public class ProfileController {
     @FXML
     private TextField registrationDateField;
 
+    // Экземпляры зависимостей
+    private final InMemoryDatabase inMemoryDatabase = new InMemoryDatabase();
+    private final SessionManager sessionManager = SessionManager.getInstance();
+
+    // Экземпляр SceneManager
+    private final SceneManager sceneManager = SceneManager.getInstance();
+
     /**
      * Инициализация контроллера.
      */
@@ -43,27 +45,15 @@ public class ProfileController {
      * Загрузка данных пользователя из базы данных.
      */
     private void loadUserProfile() {
-        int userId = SessionManager.getLoggedInUserId();
+        int userId = sessionManager.getLoggedInUserId();
         if (userId == -1) {
             showAlert("Ошибка", "Пользователь не авторизован.");
             return;
         }
 
-        try (Connection conn = Database.getConnection()) {
-            String query = "SELECT USERNAME, EMAIL, FIRST_NAME, LAST_NAME, PHONE, REGISTRATION_DATE FROM USERS WHERE USER_ID = ?";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setInt(1, userId);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                User user = new User();
-                user.setUsername(rs.getString("USERNAME"));
-                user.setEmail(rs.getString("EMAIL"));
-                user.setFirstName(rs.getString("FIRST_NAME"));
-                user.setLastName(rs.getString("LAST_NAME"));
-                user.setPhone(rs.getString("PHONE"));
-                user.setRegistrationDate(rs.getString("REGISTRATION_DATE"));
-
+        try {
+            User user = inMemoryDatabase.getUserById(userId);
+            if (user != null) {
                 // Заполняем поля интерфейса
                 usernameField.setText(user.getUsername());
                 emailField.setText(user.getEmail());
@@ -85,7 +75,7 @@ public class ProfileController {
     @FXML
     private void editProfile() {
         try {
-            SceneManager.showScene("edit_profile");
+            sceneManager.showScene("edit_profile");
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Ошибка", "Не удалось загрузить страницу редактирования профиля.");
@@ -97,9 +87,9 @@ public class ProfileController {
      */
     @FXML
     private void logout() {
-        SessionManager.logout();
+        sessionManager.logout();
         try {
-            SceneManager.showScene("index");
+            sceneManager.showScene("index");
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Ошибка", "Не удалось выйти из аккаунта.");
@@ -116,15 +106,17 @@ public class ProfileController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
     @FXML
     private void cancel() {
         try {
-            SceneManager.showScene("index");
+            sceneManager.showScene("index");
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Ошибка", "Не удалось вернуться на страницу профиля.");
+            showAlert("Ошибка", "Не удалось вернуться на главную страницу.");
         }
     }
+
     /**
      * Обработка ошибок базы данных.
      */

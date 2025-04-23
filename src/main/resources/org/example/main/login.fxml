@@ -4,8 +4,10 @@
 <?import javafx.scene.layout.*?>
 
 <VBox spacing="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.main.controllers.LoginController">
+    <Button text="×" onAction="#cancel" style="-fx-font-size: 20px; -fx-background-color: transparent; -fx-text-fill: #F44336;" />
     <Label text="Вход" style="-fx-font-size: 24px;"/>
     <TextField fx:id="usernameField" promptText="Имя пользователя" />
     <PasswordField fx:id="passwordField" promptText="Пароль" />
     <Button text="Войти" onAction="#handleLogin" />
+    <Button text="Отмена" onAction="#cancel" style="-fx-background-color: #F44336; -fx-text-fill: white;" />
 </VBox>

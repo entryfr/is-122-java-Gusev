@@ -3,34 +3,26 @@ package org.example.main.models;
 import java.time.LocalDateTime;
 
 public class Message {
-    private String messageId;
-    private int chatId;
     private int senderId;
+    private String senderName;
     private String messageText;
     private LocalDateTime sentTime;
 
-    public String getMessageId() {
-        return messageId;
-    }
-
-    public void setMessageId(String messageId) {
-        this.messageId = messageId;
-    }
-
-    public int getChatId() {
-        return chatId;
-    }
-
-    public void setChatId(int chatId) {
-        this.chatId = chatId;
-    }
-
+    // Геттеры и сеттеры
     public int getSenderId() {
         return senderId;
     }
 
     public void setSenderId(int senderId) {
         this.senderId = senderId;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
     }
 
     public String getMessageText() {

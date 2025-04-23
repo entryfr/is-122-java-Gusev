@@ -6,13 +6,13 @@ import java.util.List;
 
 public class Chat {
     // Поля класса
-    private int chatId; // Уникальный ID чата
-    private int user1Id; // ID первого пользователя
-    private int user2Id; // ID второго пользователя
-    private String lastMessage; // Последнее сообщение в чате
-    private LocalDateTime lastMessageTime; // Время последнего сообщения
+    private int chatId;
+    private int user1Id;
+    private int user2Id;
+    private String lastMessage;
+    private LocalDateTime lastMessageTime;
 
-    private List<Message> messages; // Список всех сообщений в чате
+    private List<Message> messages;
 
     /**
      * Конструктор по умолчанию.
@@ -92,7 +92,6 @@ public class Chat {
         }
         messages.add(message);
 
-        // Обновляем последнее сообщение и время
         this.lastMessage = message.getMessageText();
         this.lastMessageTime = message.getSentTime();
     }

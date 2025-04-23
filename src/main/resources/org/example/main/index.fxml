@@ -2,8 +2,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<?import org.example.main.utils.AdCellFactory?>
-<?import org.example.main.controllers.IndexController?>
 
 <VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.main.controllers.IndexController">
@@ -21,12 +19,7 @@
     </HBox>
 
     <!-- Список найденных объявлений -->
-    <ListView fx:id="adsList" prefHeight="300" onMouseClicked="#handleAdDoubleClick">
-        <!-- Пользовательский cellFactory для отображения товара и кнопки "Купить" -->
-        <cellFactory>
-            <AdCellFactory />
-        </cellFactory>
-    </ListView>
+    <ListView fx:id="adsList" prefHeight="300" onMouseClicked="#handleAdDoubleClick" />
 
     <!-- Блок для отображения имени пользователя -->
     <HBox spacing="10" fx:id="userBlock" managed="false" visible="false" alignment="CENTER_RIGHT">
@@ -36,6 +29,9 @@
         <Button text="Корзина" onAction="#openBasket" style="-fx-background-color: #2196F3; -fx-text-fill: white;" />
         <!-- Кнопка для перехода в чат -->
         <Button text="Чат" onAction="#openChatWindow" style="-fx-background-color: #FFC107; -fx-text-fill: black;" />
+        <!-- В блоке userBlock, после других кнопок -->
+        <Button text="База Данных" fx:id="adminButton" visible="false" onAction="#openDatabaseView"
+                style="-fx-background-color: #607D8B; -fx-text-fill: white;" />
         <!-- Кнопка для перехода в профиль -->
         <Button text="Профиль" onAction="#openProfile" style="-fx-background-color: #673AB7; -fx-text-fill: white;" />
     </HBox>

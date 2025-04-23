@@ -6,6 +6,7 @@
 
 <VBox spacing="15" alignment="CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.main.controllers.CreateAdController">
     <!-- Заголовок -->
+    <Label fx:id="welcomeText" text="Загрузка..." />
     <Label text="Создать объявление" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
 
     <!-- Поле для ввода названия товара -->

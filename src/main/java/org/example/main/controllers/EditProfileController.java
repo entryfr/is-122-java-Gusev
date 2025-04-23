@@ -3,13 +3,10 @@ package org.example.main.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.example.main.models.User;
-import org.example.main.utils.Database;
 import org.example.main.utils.SceneManager;
 import org.example.main.utils.SessionManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class EditProfileController {
 
@@ -28,6 +25,11 @@ public class EditProfileController {
     @FXML
     private TextField phoneField;
 
+    private final InMemoryDatabase inMemoryDatabase = new InMemoryDatabase();
+    private final SessionManager sessionManager = SessionManager.getInstance();
+
+    private final SceneManager sceneManager = SceneManager.getInstance();
+
     /**
      * Инициализация контроллера.
      */
@@ -40,26 +42,15 @@ public class EditProfileController {
      * Загрузка данных пользователя из базы данных.
      */
     private void loadUserProfile() {
-        int userId = SessionManager.getLoggedInUserId();
+        int userId = sessionManager.getLoggedInUserId();
         if (userId == -1) {
             showAlert("Ошибка", "Пользователь не авторизован.");
             return;
         }
 
-        try (Connection conn = Database.getConnection()) {
-            String query = "SELECT USERNAME, EMAIL, FIRST_NAME, LAST_NAME, PHONE FROM USERS WHERE USER_ID = ?";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setInt(1, userId);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                User user = new User();
-                user.setUsername(rs.getString("USERNAME"));
-                user.setEmail(rs.getString("EMAIL"));
-                user.setFirstName(rs.getString("FIRST_NAME"));
-                user.setLastName(rs.getString("LAST_NAME"));
-                user.setPhone(rs.getString("PHONE"));
-
+        try {
+            User user = inMemoryDatabase.getUserById(userId);
+            if (user != null) {
                 // Заполняем поля интерфейса
                 usernameField.setText(user.getUsername());
                 emailField.setText(user.getEmail());
@@ -69,7 +60,7 @@ public class EditProfileController {
             } else {
                 showAlert("Ошибка", "Пользователь не найден.");
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             handleDatabaseError(e);
         }
     }
@@ -79,7 +70,7 @@ public class EditProfileController {
      */
     @FXML
     private void saveChanges() {
-        int userId = SessionManager.getLoggedInUserId();
+        int userId = sessionManager.getLoggedInUserId();
         if (userId == -1) {
             showAlert("Ошибка", "Пользователь не авторизован.");
             return;
@@ -95,23 +86,15 @@ public class EditProfileController {
             return;
         }
 
-        try (Connection conn = Database.getConnection()) {
-            String query = "UPDATE USERS SET EMAIL = ?, FIRST_NAME = ?, LAST_NAME = ?, PHONE = ? WHERE USER_ID = ?";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1, email);
-            stmt.setString(2, firstName);
-            stmt.setString(3, lastName);
-            stmt.setString(4, phone);
-            stmt.setInt(5, userId);
-
-            int rowsUpdated = stmt.executeUpdate();
-            if (rowsUpdated > 0) {
+        try {
+            boolean success = inMemoryDatabase.updateUserProfile(userId, email, firstName, lastName, phone);
+            if (success) {
                 showAlert("Успех", "Профиль успешно обновлен.");
-                SceneManager.showScene("profile");
+                sceneManager.showScene("profile");
             } else {
                 showAlert("Ошибка", "Не удалось обновить профиль.");
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             handleDatabaseError(e);
         }
     }
@@ -122,7 +105,7 @@ public class EditProfileController {
     @FXML
     private void cancel() {
         try {
-            SceneManager.showScene("profile");
+            sceneManager.showScene("profile");
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Ошибка", "Не удалось вернуться на страницу профиля.");
@@ -147,5 +130,4 @@ public class EditProfileController {
         System.err.println("Database error: " + e.getMessage());
         showAlert("Ошибка базы данных", "Произошла ошибка при работе с базой данных.");
     }
-
 }

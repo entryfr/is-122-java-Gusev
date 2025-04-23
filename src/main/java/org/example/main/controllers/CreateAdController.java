@@ -2,22 +2,23 @@ package org.example.main.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.example.main.utils.Database;
 import org.example.main.utils.ImageUtils;
+import org.example.main.utils.SceneManager;
 import org.example.main.utils.SessionManager;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.util.List;
 
 public class CreateAdController {
+    @FXML
+    private Label welcomeText;
 
     @FXML
     private TextField titleField;
@@ -34,28 +35,39 @@ public class CreateAdController {
 
     private String imagePath;
 
+    private final InMemoryDatabase inMemoryDatabase = new InMemoryDatabase();
+    private final SessionManager sessionManager = SessionManager.getInstance();
+
     /**
      * Инициализация контроллера.
      */
     @FXML
     public void initialize() {
-        loadCategories();
+        try {
+
+            List<String> categories = InMemoryDatabase.getInstance().loadCategories();
+            categoryComboBox.getItems().addAll(categories);
+
+            if (!categories.isEmpty()) {
+                categoryComboBox.setValue(categories.get(0));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Ошибка", "Не удалось загрузить категории.");
+        }
+
     }
 
     /**
      * Загрузка категорий из таблицы CATEGORIES.
      */
     private void loadCategories() {
-        try (Connection conn = Database.getConnection()) {
-            String query = "SELECT CATEGORY_NAME FROM CATEGORIES";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                categoryComboBox.getItems().add(rs.getString("CATEGORY_NAME"));
-            }
+        try {
+            categoryComboBox.getItems().addAll(inMemoryDatabase.loadCategories());
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Ошибка", "Не удалось загрузить категории.");
+
         }
     }
 
@@ -78,73 +90,69 @@ public class CreateAdController {
     /**
      * Обработка нажатия на кнопку "Создать объявление".
      */
+
+
     @FXML
     private void handleCreateAd() {
-        if (!SessionManager.isLoggedIn()) {
-            showAlert("Ошибка", "Вы должны быть авторизованы для создания объявления.");
-            redirectToLogin();
-            return;
-        }
-
-        String title = titleField.getText();
-        String category = categoryComboBox.getValue();
-        String priceText = priceField.getText();
-        String description = descriptionField.getText();
-        String location = locationField.getText();
-
-        if (title.isEmpty() || category == null || priceText.isEmpty() || description.isEmpty() || location.isEmpty()) {
-            showAlert("Ошибка", "Все поля должны быть заполнены.");
-            return;
-        }
-
-        double price;
         try {
-            price = Double.parseDouble(priceText);
-        } catch (NumberFormatException e) {
-            showAlert("Ошибка", "Цена должна быть числом.");
-            return;
-        }
+            if (!SessionManager.getInstance().isLoggedIn()) {
+                showAlert("Ошибка", "Вы должны быть авторизованы для создания объявления.");
+                redirectToLogin();
+                return;
+            }
 
-        try (Connection conn = Database.getConnection()) {
-            // Получаем ID категории по её имени
-            int categoryId = getCategoryIdByName(category);
+            String title = titleField.getText();
+            String category = categoryComboBox.getValue();
+            String priceText = priceField.getText();
+            String description = descriptionField.getText();
+            String location = locationField.getText();
+
+            if (title.isEmpty() || category == null || priceText.isEmpty() || description.isEmpty() || location.isEmpty()) {
+                showAlert("Ошибка", "Все поля должны быть заполнены.");
+                return;
+            }
+
+            double price;
+            try {
+                price = Double.parseDouble(priceText);
+            } catch (NumberFormatException e) {
+                showAlert("Ошибка", "Цена должна быть числом.");
+                return;
+            }
+
+            int categoryId = InMemoryDatabase.getInstance().getCategoryIdByName(category);
             if (categoryId == -1) {
                 showAlert("Ошибка", "Категория '" + category + "' не найдена.");
                 return;
             }
 
-            // Генерация уникального имени файла для изображения
-            String uniqueImagePath = null;
             byte[] imageData = null;
             if (imagePath != null) {
-                uniqueImagePath = generateUniqueFileName(imagePath);
                 imageData = ImageUtils.loadImage(imagePath);
             }
 
-            String query = "INSERT INTO ADS (AD_ID, USER_ID, CATEGORY_ID, TITLE, DESCRIPTION, PRICE, LOCATION, IMAGE_PATH, STATUS) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement stmt = conn.prepareStatement(query);
+            int userId = SessionManager.getInstance().getLoggedInUserId();
 
-            int adId = generateUniqueId();
-
-            stmt.setInt(1, adId); // AD_ID
-            stmt.setInt(2, SessionManager.getLoggedInUserId()); // USER_ID
-            stmt.setInt(3, categoryId); // CATEGORY_ID
-            stmt.setString(4, title); // TITLE
-            stmt.setString(5, description); // DESCRIPTION
-            stmt.setDouble(6, price); // PRICE
-            stmt.setString(7, location); // LOCATION
-            if (imageData != null) {
-                stmt.setBytes(8, imageData); // IMAGE_PATH
-            } else {
-                stmt.setNull(8, java.sql.Types.BLOB);
-            }
-            stmt.setString(9, "active"); // STATUS
-
-            stmt.executeUpdate();
+            InMemoryDatabase.getInstance().createAd(
+                    userId,
+                    categoryId,
+                    title,
+                    description,
+                    price,
+                    location,
+                    imageData
+            );
 
             showAlert("Успех", "Объявление успешно создано!");
-            redirectToIndex();
+
+            SceneManager sceneManager = SceneManager.getInstance();
+            IndexController indexController = (IndexController) sceneManager.getCurrentController("index");
+            if (indexController != null) {
+                indexController.refreshAds();
+            }
+
+            // Возвращаемся на главную страницу
+            sceneManager.showScene("index");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -153,48 +161,23 @@ public class CreateAdController {
     }
 
     /**
-     * Получение ID категории по её имени.
+     * Метод для обновления списка объявлений на главной странице.
      */
-    private int getCategoryIdByName(String categoryName) throws Exception {
-        try (Connection conn = Database.getConnection()) {
-            String query = "SELECT CATEGORY_ID FROM CATEGORIES WHERE CATEGORY_NAME = ?";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1, categoryName);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("CATEGORY_ID");
+    private void updateAdsListOnIndexPage() {
+        try {
+            IndexController indexController = (IndexController) SceneManager.getInstance().getCurrentController("index");
+
+            if (indexController != null) {
+                indexController.loadAds();
+            } else {
+                System.err.println("IndexController is not available! Check if the controller was properly registered in SceneManager.");
             }
-        }
-        return -1;
-    }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error updating ads list on index page: " + e.getMessage());
 
-    /**
-     * Генерация уникального имени файла для изображения.
-     */
-    private String generateUniqueFileName(String originalFilePath) {
-        String extension = "";
-        int lastDotIndex = originalFilePath.lastIndexOf('.');
-        if (lastDotIndex > 0) {
-            extension = originalFilePath.substring(lastDotIndex);
         }
-        return java.util.UUID.randomUUID().toString() + extension;
     }
-
-    /**
-     * Генерация уникального ID для объявления.
-     */
-    private int generateUniqueId() throws Exception {
-        try (Connection conn = Database.getConnection()) {
-            String query = "SELECT MAX(AD_ID) AS MAX_ID FROM ADS";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("MAX_ID") + 1;
-            }
-        }
-        return 1;
-    }
-
     /**
      * Отображение диалогового окна с сообщением.
      */
@@ -206,23 +189,23 @@ public class CreateAdController {
         alert.showAndWait();
     }
 
-    /**
-     * Переход на главную страницу.
-     */
+    @FXML
     private void redirectToIndex() {
         try {
-            Stage currentStage = (Stage) titleField.getScene().getWindow();
-            currentStage.close();
-
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/main/index.fxml"));
-            Scene scene = new Scene(loader.load());
-            Stage newStage = new Stage();
-            newStage.setTitle("Главная страница");
-            newStage.setScene(scene);
-            newStage.show();
+            Parent root = loader.load();
+            IndexController indexController = loader.getController();
+            SceneManager sceneManager = SceneManager.getInstance();
+            sceneManager.registerController("index", indexController);
+
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) welcomeText.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Главная страница");
+            stage.show();
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Ошибка", "Не удалось перейти на главную страницу.");
+            showAlert("Ошибка", "Не удалось загрузить главную страницу.");
         }
     }
 
@@ -235,10 +218,10 @@ public class CreateAdController {
             currentStage.close();
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/main/login.fxml"));
-            Scene scene = new Scene(loader.load());
+            loader.load();
             Stage newStage = new Stage();
             newStage.setTitle("Вход");
-            newStage.setScene(scene);
+            newStage.setScene(new Scene(loader.getRoot()));
             newStage.show();
         } catch (Exception e) {
             e.printStackTrace();

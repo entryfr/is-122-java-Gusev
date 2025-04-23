@@ -3,108 +3,74 @@ package org.example.main.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-import javafx.scene.Scene;
-import javafx.fxml.FXMLLoader;
-import org.example.main.models.User;
-import org.example.main.utils.Database;
+import org.example.main.utils.SceneManager;
 import org.example.main.utils.SessionManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class RegisterController {
 
-    @FXML
-    private TextField usernameField;
-    @FXML
-    private TextField emailField;
-    @FXML
-    private TextField firstNameField;
-    @FXML
-    private TextField lastNameField;
-    @FXML
-    private TextField phoneField;
-    @FXML
-    private TextField passwordField;
+    @FXML private TextField usernameField;
+    @FXML private TextField emailField;
+    @FXML private TextField firstNameField;
+    @FXML private TextField lastNameField;
+    @FXML private TextField phoneField;
+    @FXML private TextField passwordField;
+
+    private final InMemoryDatabase inMemoryDatabase = InMemoryDatabase.getInstance();
+    private final SessionManager sessionManager = SessionManager.getInstance();
+    private final SceneManager sceneManager = SceneManager.getInstance();
 
     @FXML
     private void handleRegister() {
-        String username = usernameField.getText();
-        String email = emailField.getText();
-        String firstName = firstNameField.getText();
-        String lastName = lastNameField.getText();
-        String phone = phoneField.getText();
-        String password = passwordField.getText();
+        String username = usernameField.getText().trim();
+        String email = emailField.getText().trim();
+        String firstName = firstNameField.getText().trim();
+        String lastName = lastNameField.getText().trim();
+        String phone = phoneField.getText().trim();
+        String password = passwordField.getText().trim();
 
         if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            showAlert("Ошибка", "Все поля должны быть заполнены.");
+            showAlert("Ошибка", "Поля 'Логин', 'Email' и 'Пароль' обязательны для заполнения.");
             return;
         }
 
-        try (Connection conn = Database.getConnection()) {
-            PreparedStatement checkUsernameStmt = conn.prepareStatement("SELECT COUNT(*) FROM USERS WHERE USERNAME = ?");
-            checkUsernameStmt.setString(1, username);
-            ResultSet rs = checkUsernameStmt.executeQuery();
-            if (rs.next() && rs.getInt(1) > 0) {
-                showAlert("Ошибка", "Имя пользователя уже занято.");
+        try {
+            if (inMemoryDatabase.isUsernameTaken(username)) {
+                showAlert("Ошибка", "Этот логин уже занят.");
                 return;
             }
-
-            PreparedStatement checkEmailStmt = conn.prepareStatement("SELECT COUNT(*) FROM USERS WHERE EMAIL = ?");
-            checkEmailStmt.setString(1, email);
-            rs = checkEmailStmt.executeQuery();
-            if (rs.next() && rs.getInt(1) > 0) {
+            if (inMemoryDatabase.isEmailTaken(email)) {
                 showAlert("Ошибка", "Этот email уже используется.");
                 return;
             }
 
-            PreparedStatement getMaxUserIdStmt = conn.prepareStatement("SELECT COALESCE(MAX(USER_ID), 0) + 1 FROM USERS");
-            rs = getMaxUserIdStmt.executeQuery();
-            int userId = rs.next() ? rs.getInt(1) : 1;
+            // Добавляем пользователя в БД
+            int userId = inMemoryDatabase.addUser(
+                    username,
+                    email,
+                    password,
+                    firstName.isEmpty() ? null : firstName,
+                    lastName.isEmpty() ? null : lastName,
+                    phone.isEmpty() ? null : phone
+            );
 
-            String hashedPassword = hashPassword(password);
+            if (userId > 0) {
+                sessionManager.setLoggedInUser(username, userId);
 
-            String query = "INSERT INTO USERS (USER_ID, USERNAME, EMAIL, PASSWORD_HASH, FIRST_NAME, LAST_NAME, PHONE) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement stmt = conn.prepareStatement(query);
+                sceneManager.showScene("index");
 
-            stmt.setInt(1, userId);
-            stmt.setString(2, username);
-            stmt.setString(3, email);
-            stmt.setString(4, hashedPassword);
-            stmt.setString(5, firstName);
-            stmt.setString(6, lastName);
-            stmt.setString(7, phone);
-
-            stmt.executeUpdate();
-
-            SessionManager.setLoggedInUser(username, userId);
-
-            navigateToMainPage();
-
-            showAlert("Успех", "Регистрация прошла успешно!");
+                showAlert("Успех", "Регистрация прошла успешно!");
+            } else {
+                showAlert("Ошибка", "Не удалось зарегистрировать пользователя.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Ошибка", "Ошибка базы данных: " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Ошибка", "Не удалось зарегистрироваться.");
+            showAlert("Ошибка", "Неизвестная ошибка: " + e.getMessage());
         }
-    }
-
-    private void navigateToMainPage() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/main/index.fxml"));
-            Scene scene = new Scene(loader.load());
-            Stage stage = (Stage) usernameField.getScene().getWindow();
-            stage.setScene(scene);
-            stage.setTitle("Главная страница");
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private String hashPassword(String password) {
-        return password;
     }
 
     private void showAlert(String title, String message) {
