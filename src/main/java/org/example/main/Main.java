@@ -14,8 +14,8 @@ public class Main extends Application {
         sceneManager.setPrimaryStage(primaryStage);
 
         primaryStage.setTitle("Приложение");
-        primaryStage.setWidth(800);
-        primaryStage.setHeight(600);
+        primaryStage.setWidth(900);
+        primaryStage.setHeight(700);
 
         try {
             sceneManager.showScene("index");
