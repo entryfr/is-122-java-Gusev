@@ -289,7 +289,7 @@ public class IndexController implements IndexControllerInterface, AuthObserver {
             List<Ad> ads = inMemoryDatabase.getFilteredAds(
                     userId,
                     params.category,
-                    params.city,  // Добавляем фильтрацию по городу
+                    params.city,
                     params.minPrice,
                     params.maxPrice
             );
