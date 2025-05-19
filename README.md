@@ -24,11 +24,10 @@
 - База данных для хранения информации о товарах, пользователях и заказах (например, MySQL, PostgreSQL или H2 Database).
 
 ---
-
-## Установка
-
-1. **Клонирование репозитория**  
-   Клонируйте проект с помощью Git:
-   ```bash
-   git clone https://github.com/username/repository.git
-   cd repository
+---
+## Запуск
+- Запуск проекта осуществляется:
+- Склонируйте проект на локальный диск командой: git clone https://github.com/entryfr/is-122-java-Gusev;
+- Запустите задачу package, введя команду: mvn clean install;
+- В папке target будет расположено скомпилированное приложение, запустите его двойным кликом или командой java --module-path "C:\openjfx-17.0.15_windows-x64_bin-sdk\javafx-sdk-17.0.15\lib" --add-modules javafx.controls,javafx.fxml -jar target/Main-1.0-SNAPSHOT-jar-with-dependencies.jar
+---
