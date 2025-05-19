@@ -7,6 +7,7 @@ import org.example.main.utils.SceneManager;
 import org.example.main.utils.SessionManager;
 
 import java.sql.SQLException;
+import java.util.regex.Pattern;
 
 public class RegisterController {
 
@@ -20,6 +21,11 @@ public class RegisterController {
     private final InMemoryDatabase inMemoryDatabase = InMemoryDatabase.getInstance();
     private final SessionManager sessionManager = SessionManager.getInstance();
     private final SceneManager sceneManager = SceneManager.getInstance();
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(
+            "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$"
+    );
+    private static final Pattern PHONE_PATTERN = Pattern.compile(
+            "^\\+?[0-9]{10,15}$");
 
     @FXML
     private void handleRegister() {
@@ -30,8 +36,27 @@ public class RegisterController {
         String phone = phoneField.getText().trim();
         String password = passwordField.getText().trim();
 
+        // Проверка обязательных полей
         if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
             showAlert("Ошибка", "Поля 'Логин', 'Email' и 'Пароль' обязательны для заполнения.");
+            return;
+        }
+
+        // Проверка длины имени пользователя
+        if (username.length() < 4) {
+            showAlert("Ошибка", "Имя пользователя должно содержать не менее 4 символов.");
+            return;
+        }
+
+        // Проверка email
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
+            showAlert("Ошибка", "Введите корректный email адрес.");
+            return;
+        }
+
+        // Проверка телефона, если он указан
+        if (!phone.isEmpty() && !PHONE_PATTERN.matcher(phone).matches()) {
+            showAlert("Ошибка", "Введите корректный номер телефона (10-15 цифр, можно начинать с +).");
             return;
         }
 
@@ -55,10 +80,12 @@ public class RegisterController {
             );
 
             if (userId > 0) {
-                sessionManager.setLoggedInUser(username, userId);
-
+                sessionManager.setLoggedInUser(username, userId, false);
                 sceneManager.showScene("index");
-
+                Object controller = sceneManager.getCurrentController("index");
+                if (controller instanceof IndexController) {
+                    ((IndexController) controller).updateUIBasedOnAuthStatus();
+                }
                 showAlert("Успех", "Регистрация прошла успешно!");
             } else {
                 showAlert("Ошибка", "Не удалось зарегистрировать пользователя.");
@@ -79,10 +106,11 @@ public class RegisterController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
     @FXML
     private void cancel() {
         try {
-            SceneManager.getInstance().showScene("index");
+            sceneManager.showScene("index");
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Ошибка", "Не удалось вернуться на главную страницу.");

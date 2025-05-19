@@ -6,6 +6,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import org.example.main.models.User;
 import org.example.main.models.Ad;
+import org.example.main.models.Purchase;
 import org.example.main.utils.SceneManager;
 import org.example.main.utils.SessionManager;
 
@@ -25,6 +26,7 @@ public class ProfileController {
     @FXML private Button cancelButton;
     @FXML private VBox editControls;
     @FXML private ListView<Ad> userAdsList;
+    @FXML private ListView<Purchase> userPurchasesList;
 
     private final InMemoryDatabase db = InMemoryDatabase.getInstance();
     private final SessionManager sessionManager = SessionManager.getInstance();
@@ -36,8 +38,10 @@ public class ProfileController {
     public void initialize() {
         loadUserProfile();
         loadUserAds();
+        loadUserPurchases();
         setupEditControls();
         setupAdsList();
+        setupPurchasesList();
     }
 
     private void loadUserProfile() {
@@ -64,7 +68,7 @@ public class ProfileController {
         }
     }
 
-    private void loadUserAds() {
+    public void loadUserAds() {
         int userId = sessionManager.getLoggedInUserId();
         if (userId == -1) return;
 
@@ -77,33 +81,47 @@ public class ProfileController {
         }
     }
 
-    private void setupAdsList() {
-        userAdsList.setCellFactory(param -> new ListCell<Ad>() {
+    private void loadUserPurchases() {
+        int userId = sessionManager.getLoggedInUserId();
+        if (userId == -1) return;
+
+        try {
+            List<Purchase> purchases = db.getUserPurchases(userId);
+            userPurchasesList.getItems().clear();
+            userPurchasesList.getItems().addAll(purchases);
+        } catch (SQLException e) {
+            handleDatabaseError(e);
+        }
+    }
+
+
+
+    private void setupPurchasesList() {
+        userPurchasesList.setCellFactory(param -> new ListCell<>() {
             @Override
-            protected void updateItem(Ad ad, boolean empty) {
-                super.updateItem(ad, empty);
-                if (empty || ad == null) {
+            protected void updateItem(Purchase purchase, boolean empty) {
+                super.updateItem(purchase, empty);
+                if (empty || purchase == null) {
                     setText(null);
                     setGraphic(null);
                 } else {
                     HBox hbox = new HBox(10);
-                    Label titleLabel = new Label(ad.getTitle());
-                    Label priceLabel = new Label(String.format("Цена: %.2f руб.", ad.getPrice()));
-                    Label statusLabel = new Label("Статус: " + ad.getStatus());
+                    Label titleLabel = new Label(purchase.getAdTitle());
+                    Label priceLabel = new Label(String.format("Цена: %.2f руб.", purchase.getPrice()));
+                    Label dateLabel = new Label("Дата: " + purchase.getPurchaseDate().toString());
 
-                    hbox.getChildren().addAll(titleLabel, priceLabel, statusLabel);
+                    hbox.getChildren().addAll(titleLabel, priceLabel, dateLabel);
                     setGraphic(hbox);
                 }
             }
         });
 
-        // Обработка двойного клика по объявлению
-        userAdsList.setOnMouseClicked(event -> {
+        userPurchasesList.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                Ad selectedAd = userAdsList.getSelectionModel().getSelectedItem();
-                if (selectedAd != null) {
+                Purchase selectedPurchase = userPurchasesList.getSelectionModel().getSelectedItem();
+                if (selectedPurchase != null) {
                     try {
-                        sceneManager.showSceneWithParameters("ad_details", "adId", selectedAd.getAdId());
+                        sceneManager.showSceneWithParameters("ad_details", "adId", selectedPurchase.getAdId());
                     } catch (Exception e) {
                         showAlert("Ошибка", "Не удалось открыть описание объявления.");
                     }
@@ -117,6 +135,8 @@ public class ProfileController {
         saveButton.setVisible(false);
         cancelButton.setVisible(false);
     }
+
+
 
     @FXML
     private void toggleEditMode() {
@@ -211,5 +231,67 @@ public class ProfileController {
     private void handleDatabaseError(SQLException e) {
         e.printStackTrace();
         showAlert("Ошибка базы данных", e.getMessage());
+    }
+    private void openEditAd(Ad ad) {
+        try {
+            sceneManager.showSceneWithParameters("edit_ad", "adId", ad.getAdId());
+            // loadUserAds(); // Удаляем, перенесем обновление в EditAdController
+        } catch (Exception e) {
+            showAlert("Ошибка", "Не удалось открыть форму редактирования объявления.");
+        }
+    }
+    private void setupAdsList() {
+        userAdsList.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(Ad ad, boolean empty) {
+                super.updateItem(ad, empty);
+                if (empty || ad == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    HBox hbox = new HBox(10);
+                    Label titleLabel = new Label(ad.getTitle());
+                    Label priceLabel = new Label(String.format("Цена: %.2f руб.", ad.getPrice()));
+                    Label statusLabel = new Label("Статус: " + ad.getStatus());
+                    Button editAdButton = new Button("Редактировать");
+                    Button deleteAdButton = new Button("Удалить"); // Новая кнопка
+                    editAdButton.setOnAction(event -> openEditAd(ad));
+                    deleteAdButton.setOnAction(event -> deleteAd(ad)); // Обработчик для удаления
+
+                    hbox.getChildren().addAll(titleLabel, priceLabel, statusLabel, editAdButton, deleteAdButton);
+                    setGraphic(hbox);
+                }
+            }
+        });
+
+        userAdsList.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                Ad selectedAd = userAdsList.getSelectionModel().getSelectedItem();
+                if (selectedAd != null) {
+                    try {
+                        sceneManager.showSceneWithParameters("ad_details", "adId", selectedAd.getAdId());
+                    } catch (Exception e) {
+                        showAlert("Ошибка", "Не удалось открыть описание объявления.");
+                    }
+                }
+            }
+        });
+    }
+    private void deleteAd(Ad ad) {
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Подтверждение удаления");
+        confirmation.setHeaderText(null);
+        confirmation.setContentText("Вы уверены, что хотите удалить объявление \"" + ad.getTitle() + "\"?");
+        confirmation.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try {
+                    db.deleteAd(ad.getAdId(), sessionManager.getLoggedInUserId());
+                    showAlert("Успех", "Объявление успешно удалено");
+                    loadUserAds(); // Обновляем список
+                } catch (SQLException e) {
+                    showAlert("Ошибка", "Не удалось удалить объявление: " + e.getMessage());
+                }
+            }
+        });
     }
 }

@@ -10,7 +10,7 @@
 /* Стиль для сообщений других пользователей */
 .other-message {
     -fx-alignment: center-left;
-    -fx-background-color: #f0f0f0; /* Серый фон */
+    -fx-background-color: #f0f0f0 /* Серый фон */
     -fx-padding: 10px;
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
@@ -18,16 +18,16 @@
 /* Общие стили для всех элементов */
 .root {
     -fx-font-family: 'Segoe UI', Arial, sans-serif;
-    -fx-base: #ffffff;
-    -fx-background: #ffffff;
+    -fx-base: #ffffff
+    -fx-background: #ffffff
 }
 
 .label {
-    -fx-text-fill: #333333;
+    -fx-text-fill: #333333
 }
 
 .text-field, .password-field, .text-area, .combo-box {
-    -fx-background-color: #ffffff;
+    -fx-background-color: #ffffff
     -fx-border-color: #e0e0e0;
     -fx-border-radius: 4;
     -fx-padding: 8;

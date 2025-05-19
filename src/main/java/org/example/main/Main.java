@@ -27,13 +27,6 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-
-
-
-
-    /**
-     * Точка входа в приложение.
-     */
     public static void main(String[] args) {
         launch(args);
     }

@@ -12,7 +12,8 @@
 
     <Label text="Категория:"/>
     <ComboBox fx:id="categoryFilter" prefWidth="200"/>
-
+    <Label text="Город:"/>
+    <ComboBox fx:id="cityFilter" promptText="Выберите город"/>
     <Label text="Цена:"/>
     <HBox spacing="5">
         <TextField fx:id="minPriceFilter" promptText="от" prefWidth="80"/>

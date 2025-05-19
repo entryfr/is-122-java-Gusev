@@ -7,9 +7,6 @@ import javafx.scene.control.TextField;
 import org.example.main.utils.SceneManager;
 import org.example.main.utils.SessionManager;
 
-
-import java.sql.SQLException;
-
 public class LoginController {
 
     @FXML
@@ -18,66 +15,51 @@ public class LoginController {
     @FXML
     private PasswordField passwordField;
 
-    /**
-     * Обработка отмены входа.
-     */
     @FXML
     private void cancel() {
         try {
             SceneManager.getInstance().showScene("index");
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Ошибка", "Не удалось вернуться на главную страницу.");
+            showAlert("Не удалось вернуться на главную страницу.");
         }
     }
 
-    /**
-     * Обработка входа пользователя.
-     */
     @FXML
     private void handleLogin() {
         String username = usernameField.getText().trim();
         String password = passwordField.getText().trim();
 
         if (username.isEmpty() || password.isEmpty()) {
-            showAlert("Ошибка", "Введите имя пользователя и пароль.");
+            showAlert("Введите имя пользователя и пароль.");
             return;
         }
 
         try {
-            int userId = SessionManager.getInstance().authenticateUser(username, password);
+            int userId = sessionManager.authenticateUser(username, password);
             if (userId != -1) {
-                SessionManager.getInstance().setLoggedInUser(username, userId);
-                SceneManager.getInstance().showScene("index");
-                return;
+                sceneManager.showScene("index");
+                Object controller = sceneManager.getCurrentController("index");
+                if (controller instanceof IndexController) {
+                    ((IndexController) controller).updateUIBasedOnAuthStatus();
+                }
+            } else {
+                showAlert("Неверное имя пользователя или пароль.");
             }
-
-            userId = InMemoryDatabase.getInstance().authenticateUser(username, password);
-            if (userId == -1) {
-                showAlert("Ошибка", "Неверное имя пользователя или пароль.");
-                return;
-            }
-
-            SessionManager.getInstance().setLoggedInUser(username, userId);
-            SceneManager.getInstance().showScene("index");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert("Ошибка базы данных", "Не удалось выполнить вход: " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Ошибка", "Не удалось войти: " + e.getMessage());
+            showAlert("Не удалось войти: " + e.getMessage());
         }
     }
 
-    /**
-     * Отображение диалогового окна с сообщением.
-     */
-    private void showAlert(String title, String message) {
+    private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
+        alert.setTitle("Ошибка");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    private final SessionManager sessionManager = SessionManager.getInstance();
+    private final SceneManager sceneManager = SceneManager.getInstance();
 }

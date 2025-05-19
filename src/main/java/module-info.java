@@ -3,6 +3,7 @@ module org.example.main {
     requires javafx.fxml;
     requires java.sql;
     requires java.desktop;
+    requires jbcrypt;
 
     // Экспортируем пакеты, чтобы они были доступны другим модулям
     exports org.example.main; // Основной пакет

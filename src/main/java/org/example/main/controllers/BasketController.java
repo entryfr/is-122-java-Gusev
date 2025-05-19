@@ -21,7 +21,7 @@ public class BasketController {
 
     @FXML
     public void initialize() {
-        basketList.setCellFactory(param -> new ListCell<Ad>() {
+        basketList.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(Ad ad, boolean empty) {
                 super.updateItem(ad, empty);

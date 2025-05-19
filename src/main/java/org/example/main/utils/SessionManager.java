@@ -3,7 +3,11 @@ package org.example.main.utils;
 import org.example.main.controllers.InMemoryDatabase;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class SessionManager {
@@ -11,9 +15,8 @@ public class SessionManager {
     private final InMemoryDatabase inMemoryDatabase;
     private static SessionManager instance;
     private int loggedInUserId = -1;
-    public void setLoggedInUserId(int userId) {
-        this.loggedInUserId = userId;
-    }
+    private boolean isAdmin = false;
+    private final List<AuthObserver> observers = new ArrayList<>();
 
     private static final Logger logger = Logger.getLogger(SessionManager.class.getName());
 
@@ -25,7 +28,7 @@ public class SessionManager {
     public static synchronized SessionManager getInstance() {
         if (instance == null) {
             try {
-                InMemoryDatabase db = new InMemoryDatabase();
+                InMemoryDatabase db = InMemoryDatabase.getInstance();
                 instance = new SessionManager(db);
             } catch (SQLException e) {
                 System.err.println("Ошибка при создании SessionManager: " + e.getMessage());
@@ -34,42 +37,38 @@ public class SessionManager {
         return instance;
     }
 
-    /**
-     * Устанавливает данные авторизованного пользователя.
-     */
-    public void setLoggedInUser(String username, int userId) {
-        try {
-            inMemoryDatabase.setLoggedInUser(username, userId);
-            logger.info("Пользователь " + username + " успешно авторизован.");
-        } catch (SQLException e) {
-            logger.severe("Ошибка при установке данных пользователя: " + e.getMessage());
+    public void addObserver(AuthObserver observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(AuthObserver observer) {
+        observers.remove(observer);
+    }
+
+    private void notifyObservers() {
+        for (AuthObserver observer : observers) {
+            observer.onAuthStateChanged();
         }
     }
-    private boolean isAdmin = false;
 
     public void setLoggedInUser(String username, int userId, boolean isAdmin) {
-        this.loggedInUserId = userId;
-        this.isAdmin = isAdmin;
         try {
             inMemoryDatabase.setLoggedInUser(username, userId);
+            this.loggedInUserId = userId;
+            this.isAdmin = isAdmin;
+            logger.info("Пользователь " + username + " успешно авторизован.");
+            notifyObservers();
         } catch (SQLException e) {
             logger.severe("Ошибка при установке данных пользователя: " + e.getMessage());
         }
     }
 
-    public boolean isAdmin() {
-        return isAdmin;
-    }
-    /**
-     * Аутентификация пользователя.
-     */
     public int authenticateUser(String username, String password) {
         String query = "SELECT USER_ID, IS_ADMIN FROM USERS WHERE USERNAME = ? AND PASSWORD_HASH = ?";
-        try (var stmt = connection.prepareStatement(query)) {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, username);
-            stmt.setString(2, password);
-
-            try (var rs = stmt.executeQuery()) {
+            stmt.setString(2, password); // Предполагается, что пароль хранится в виде текста; рекомендуется хэширование
+            try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     int userId = rs.getInt("USER_ID");
                     boolean isAdmin = rs.getBoolean("IS_ADMIN");
@@ -83,9 +82,6 @@ public class SessionManager {
         return -1;
     }
 
-    /**
-     * Проверка, авторизован ли пользователь.
-     */
     public boolean isLoggedIn() {
         try {
             return inMemoryDatabase.isLoggedIn();
@@ -95,9 +91,6 @@ public class SessionManager {
         }
     }
 
-    /**
-     * Получение имени авторизованного пользователя.
-     */
     public String getLoggedInUsername() {
         try {
             return inMemoryDatabase.getLoggedInUsername();
@@ -107,9 +100,6 @@ public class SessionManager {
         }
     }
 
-    /**
-     * Получение ID авторизованного пользователя.
-     */
     public int getLoggedInUserId() {
         try {
             return inMemoryDatabase.getLoggedInUserId();
@@ -119,83 +109,21 @@ public class SessionManager {
         }
     }
 
-    /**
-     * Выход пользователя.
-     */
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
     public void logout() {
         try {
             inMemoryDatabase.logout();
+            this.loggedInUserId = -1;
+            this.isAdmin = false;
             logger.info("Пользователь вышел из системы.");
+            notifyObservers();
         } catch (SQLException e) {
             logger.severe("Ошибка выхода: " + e.getMessage());
         }
     }
-
-    /**
-     * Удаляет товар из корзины по ID товара.
-     */
-    public void removeFromBasket(int adId) {
-        try {
-            int userId = getLoggedInUserId();
-            if (userId == -1) {
-                logger.warning("Пользователь не авторизован. Невозможно удалить товар из корзины.");
-                return;
-            }
-            inMemoryDatabase.removeFromBasket(userId, adId);
-            logger.info("Товар с ID " + adId + " удален из корзины.");
-        } catch (SQLException e) {
-            logger.severe("Ошибка при удалении товара из корзины: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Очищает корзину.
-     */
-    public void clearBasket() {
-        try {
-            int userId = getLoggedInUserId();
-            if (userId == -1) {
-                logger.warning("Пользователь не авторизован. Невозможно очистить корзину.");
-                return;
-            }
-            inMemoryDatabase.clearBasket(userId);
-            logger.info("Корзина очищена.");
-        } catch (SQLException e) {
-            logger.severe("Ошибка при очистке корзины: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Возвращает общую стоимость товаров в корзине.
-     */
-    public double getTotalPrice() {
-        try {
-            int userId = getLoggedInUserId();
-            if (userId == -1) {
-                logger.warning("Пользователь не авторизован. Невозможно получить общую стоимость.");
-                return 0.0;
-            }
-            return inMemoryDatabase.getTotalPrice(userId);
-        } catch (SQLException e) {
-            logger.severe("Ошибка при получении общей стоимости товаров: " + e.getMessage());
-            return 0.0;
-        }
-    }
-
-    /**
-     * Возвращает количество товаров в корзине.
-     */
-    public int getBasketItemCount() {
-        try {
-            int userId = getLoggedInUserId();
-            if (userId == -1) {
-                logger.warning("Пользователь не авторизован. Невозможно получить количество товаров.");
-                return 0;
-            }
-            return inMemoryDatabase.getBasketItemCount(userId);
-        } catch (SQLException e) {
-            logger.severe("Ошибка при получении количества товаров: " + e.getMessage());
-            return 0;
-        }
+    public void setLoggedInUser(String testuser, int i) {
     }
 }

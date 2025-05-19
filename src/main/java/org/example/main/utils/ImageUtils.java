@@ -26,7 +26,7 @@ public class ImageUtils {
      * Получает расширение файла из его имени.
      *
      * @param fileName имя файла
-     * @return расширение файла (например, "png", "jpg")
+     * @return расширение файла
      */
     private static String getFileExtension(String fileName) {
         if (fileName == null || fileName.isEmpty()) {

@@ -25,9 +25,8 @@ public class EditProfileController {
     @FXML
     private TextField phoneField;
 
-    private final InMemoryDatabase inMemoryDatabase = new InMemoryDatabase();
+    private final InMemoryDatabase inMemoryDatabase = InMemoryDatabase.getInstance();
     private final SessionManager sessionManager = SessionManager.getInstance();
-
     private final SceneManager sceneManager = SceneManager.getInstance();
 
     /**

@@ -7,22 +7,18 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.main.models.Ad;
+import org.example.main.utils.AuthObserver;
 import org.example.main.utils.SceneManager;
 import org.example.main.utils.SessionManager;
 
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
-public class IndexController {
-    @FXML
-    private Button filterButton;
+public class IndexController implements IndexControllerInterface, AuthObserver {
+
     @FXML
     private Button adminButton;
     @FXML
@@ -44,26 +40,44 @@ public class IndexController {
     private Label usernameLabel;
 
     private final SceneManager sceneManager = SceneManager.getInstance();
-
-    private final InMemoryDatabase inMemoryDatabase = new InMemoryDatabase();
-
+    private final InMemoryDatabase inMemoryDatabase = InMemoryDatabase.getInstance();
     private final SessionManager sessionManager = SessionManager.getInstance();
 
-    public void refreshAds() {
-        loadAds();
-    }
-    /**
-     * Инициализация контроллера.
-     */
+    @Override
     @FXML
     public void initialize() {
         welcomeText.setText("Добро пожаловать в приложение!");
+        sessionManager.addObserver(this);
         updateUIBasedOnAuthStatus();
-        loadAds();
 
+        // Настраиваем отображение элементов в списке объявлений
+        adsList.setCellFactory(param -> new ListCell<Ad>() {
+            @Override
+            protected void updateItem(Ad ad, boolean empty) {
+                super.updateItem(ad, empty);
+                if (empty || ad == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    // Форматируем текст: "Название - Цена руб. (Город)"
+                    setText(String.format("%s - %.2f руб. (%s)",
+                            ad.getTitle(),
+                            ad.getPrice(),
+                            ad.getLocation()));
+                }
+            }
+        });
+
+        loadAds();
     }
 
-    private void updateUIBasedOnAuthStatus() {
+    @Override
+    public void onAuthStateChanged() {
+        updateUIBasedOnAuthStatus();
+    }
+
+    @Override
+    public void updateUIBasedOnAuthStatus() {
         boolean loggedIn = sessionManager.isLoggedIn();
         authBlock.setVisible(!loggedIn);
         authBlock.setManaged(!loggedIn);
@@ -73,28 +87,19 @@ public class IndexController {
         if (loggedIn) {
             usernameLabel.setText(sessionManager.getLoggedInUsername());
             adminButton.setVisible(sessionManager.isAdmin());
+        } else {
+            adminButton.setVisible(false);
         }
     }
 
-    private boolean checkIfAdmin() {
-        try {
-            int userId = sessionManager.getLoggedInUserId();
-            if (userId == -1) return false;
-
-            String query = "SELECT IS_ADMIN FROM USERS WHERE USER_ID = ?";
-            try (PreparedStatement stmt = InMemoryDatabase.getInstance().getConnection().prepareStatement(query)) {
-                stmt.setInt(1, userId);
-                ResultSet rs = stmt.executeQuery();
-                return rs.next() && rs.getBoolean("IS_ADMIN");
-            }
-        } catch (SQLException e) {
-            System.err.println("Error checking admin status: " + e.getMessage());
-            return false;
-        }
+    @Override
+    public void refreshAds() {
+        loadAds();
     }
 
+    @Override
     @FXML
-    private void openDatabaseView() {
+    public void openDatabaseView() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/main/database_view.fxml"));
             Parent root = loader.load();
@@ -109,9 +114,7 @@ public class IndexController {
         }
     }
 
-    /**
-     * Загрузка объявлений из базы данных.
-     */
+    @Override
     public void loadAds() {
         if (adsList == null) {
             System.err.println("adsList is not initialized!");
@@ -119,35 +122,29 @@ public class IndexController {
         }
 
         try {
-            int userId = SessionManager.getInstance().getLoggedInUserId();
-
-            List<Ad> ads = InMemoryDatabase.getInstance().loadAds();
+            int userId = sessionManager.getLoggedInUserId();
+            List<Ad> ads = inMemoryDatabase.loadAds();
+            adsList.getItems().clear();
             if (ads == null || ads.isEmpty()) {
                 System.out.println("Нет доступных объявлений для загрузки.");
+                adsList.requestLayout();
                 return;
             }
 
             adsList.getItems().clear();
-
             for (Ad ad : ads) {
                 if (ad.getSellerId() != userId && "active".equals(ad.getStatus())) {
                     adsList.getItems().add(ad);
-
                     logAdDetails(ad);
                 }
             }
-
             System.out.println("Всего загружено объявлений: " + adsList.getItems().size());
-
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Ошибка", "Не удалось загрузить объявления: " + e.getMessage());
         }
     }
 
-    /**
-     * Вспомогательный метод для логирования деталей объявления.
-     */
     private void logAdDetails(Ad ad) {
         System.out.println("Загружено объявление: ID=" + ad.getAdId()
                 + ", Title='" + ad.getTitle()
@@ -155,51 +152,57 @@ public class IndexController {
                 + ", Status=" + ad.getStatus());
     }
 
-    /**
-     * Открытие страницы корзины.
-     */
+    @Override
     @FXML
-    private void openBasket() {
+    public void openBasket() {
         try {
             sceneManager.showScene("basket");
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Ошибка", "Не удалось открыть страницу корзины.");
+            throw e;
         }
     }
+
+    @Override
     @FXML
-    private void openChatWindow() {
+    public void openChatWindow() {
         try {
             sceneManager.showScene("chat");
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Ошибка", "Не удалось открыть страницу корзины.");
+            showAlert("Ошибка", "Не удалось открыть страницу чата.");
+            throw e;
         }
     }
+
+    @Override
     @FXML
-    private void openProfile() {
+    public void openProfile() {
         try {
             sceneManager.showScene("profile");
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Ошибка", "Не удалось открыть страницу корзины.");
+            showAlert("Ошибка", "Не удалось открыть страницу профиля.");
+            throw e;
         }
     }
+
+    @Override
     @FXML
-    private void createAd() {
+    public void createAd() {
         try {
             sceneManager.showScene("create_ad");
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Ошибка", "Не удалось открыть страницу корзины.");
+            showAlert("Ошибка", "Не удалось открыть страницу создания объявления.");
+            throw e;
         }
     }
 
-    /**
-     * Обработка нажатия на кнопку "Поиск".
-     */
+    @Override
     @FXML
-    private void handleSearch() {
+    public void handleSearch() {
         String query = searchField.getText();
         if (query.isEmpty()) {
             loadAds();
@@ -216,93 +219,42 @@ public class IndexController {
         }
     }
 
-    /**
-     * Обработка покупки товара.
-     */
-    private void handleBuy(int adId) {
-        try {
-            int userId = sessionManager.getLoggedInUserId();
-            double price = inMemoryDatabase.getPriceForAd(adId);
-
-            if (price == -1) {
-                showAlert("Ошибка", "Товар не найден.");
-                return;
-            }
-
-            inMemoryDatabase.addToBasket(userId, adId);
-            showAlert("Успех", "Товар успешно добавлен в корзину.");
-        } catch (Exception e) {
-            showAlert("Ошибка", "Не удалось добавить товар в корзину: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Открытие чата с продавцом.
-     */
-    private void openChatWithSeller(int sellerId) {
-        try {
-            int currentUserId = sessionManager.getLoggedInUserId();
-            int chatId = inMemoryDatabase.getOrCreateChat(currentUserId, sellerId);
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/main/chat.fxml"));
-            Parent root = loader.load();
-            ChatController chatController = loader.getController();
-            chatController.setChatId(chatId);
-
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Чат");
-            stage.show();
-        } catch (Exception e) {
-            showAlert("Ошибка", "Не удалось открыть чат: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Обработка нажатия на кнопку "Войти".
-     */
+    @Override
     @FXML
-    private void handleLogin() {
+    public void handleLogin() {
         try {
             sceneManager.showScene("login");
         } catch (Exception e) {
             showAlert("Ошибка", "Не удалось загрузить страницу входа.");
+            throw e;
         }
     }
 
-    /**
-     * Обработка нажатия на кнопку "Зарегистрироваться".
-     */
+    @Override
     @FXML
-    private void handleRegister() {
+    public void handleRegister() {
         try {
             sceneManager.showScene("register");
         } catch (Exception e) {
-            showAlert("Ошибка", "Не удалось загрузить страницу регистрации.");
-            e.printStackTrace(); // Печатает полный стек вызовов ошибки в консоль
-            System.err.println("Причина ошибки: " + e.getMessage()); // Печатает только сообщение об ошибке
+            e.printStackTrace();
             showAlert("Ошибка", "Не удалось загрузить страницу регистрации. Причина: " + e.getMessage());
-
+            throw e;
         }
     }
 
-    /**
-     * Обработка нажатия на кнопку "Выйти".
-     */
+    @Override
     @FXML
-    private void handleLogout() {
+    public void handleLogout() {
         try {
             sessionManager.logout();
-            updateUIBasedOnAuthStatus();
         } catch (Exception e) {
             showAlert("Ошибка", "Не удалось выйти: " + e.getMessage());
+            throw e;
         }
     }
 
-    /**
-     * Отображение диалогового окна с сообщением.
-     */
-    private void showAlert(String title, String message) {
+    @Override
+    public void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -310,16 +262,15 @@ public class IndexController {
         alert.showAndWait();
     }
 
+    @Override
     @FXML
-    private void openFiltersDialog() {
+    public void openFiltersDialog() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/main/filters.fxml"));
             Parent root = loader.load();
-
             FiltersController controller = loader.getController();
             controller.setOnApplyCallback(this::applyFilters);
             controller.setOnResetCallback(this::loadAds);
-
             Stage stage = new Stage();
             stage.setTitle("Фильтры объявлений");
             stage.setScene(new Scene(root));
@@ -331,28 +282,35 @@ public class IndexController {
         }
     }
 
-    // Добавим метод для применения фильтров
-    private void applyFilters(FiltersController.FilterParams params) {
+    @Override
+    public void applyFilters(FiltersController.FilterParams params) {
         try {
             int userId = sessionManager.getLoggedInUserId();
             List<Ad> ads = inMemoryDatabase.getFilteredAds(
                     userId,
                     params.category,
+                    params.city,  // Добавляем фильтрацию по городу
                     params.minPrice,
                     params.maxPrice
             );
 
             adsList.getItems().clear();
-            adsList.getItems().addAll(ads);
+            if (ads != null && !ads.isEmpty()) {
+                adsList.getItems().addAll(ads);
+                System.out.println("Найдено объявлений после фильтрации: " + ads.size());
+            } else {
+                System.out.println("По заданным фильтрам объявления не найдены");
+                showAlert("Информация", "По заданным фильтрам объявления не найдены");
+            }
         } catch (Exception e) {
+            e.printStackTrace();
             showAlert("Ошибка", "Не удалось применить фильтры: " + e.getMessage());
         }
     }
-    /**
-     * Обработка двойного клика по объявлению.
-     */
+
+    @Override
     @FXML
-    private void handleAdDoubleClick(MouseEvent event) {
+    public void handleAdDoubleClick(MouseEvent event) {
         if (event.getClickCount() == 2) {
             Ad selectedAd = adsList.getSelectionModel().getSelectedItem();
             if (selectedAd != null) {

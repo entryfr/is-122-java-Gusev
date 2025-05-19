@@ -21,8 +21,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public class CreateAdController {
-    @FXML private Label welcomeText;
+public class CreateAdController implements CreateAdControllerInterface {
     @FXML private TextField titleField;
     @FXML private ComboBox<String> categoryComboBox;
     @FXML private TextField priceField;
@@ -31,8 +30,9 @@ public class CreateAdController {
     @FXML private ComboBox<String> cityComboBox;
 
     private String imagePath;
-    private final InMemoryDatabase inMemoryDatabase = InMemoryDatabase.getInstance(); // Используем синглтон
+    private final InMemoryDatabase inMemoryDatabase = InMemoryDatabase.getInstance();
 
+    @Override
     @FXML
     public void initialize() {
         try {
@@ -43,8 +43,18 @@ public class CreateAdController {
             showAlert("Ошибка инициализации", "Не удалось загрузить данные: " + e.getMessage());
         }
     }
+    @FXML
+    private void handleBackToIndex() {
+        try {
+            SceneManager.getInstance().showScene("index");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Ошибка", "Не удалось вернуться на главную страницу.");
+        }
+    }
 
-    private void initializeCitiesComboBox() throws SQLException {
+    @Override
+    public void initializeCitiesComboBox() throws SQLException {
         final List<String> cities = Collections.unmodifiableList(
                 Optional.ofNullable(inMemoryDatabase.getCities())
                         .orElseGet(ArrayList::new)
@@ -53,7 +63,7 @@ public class CreateAdController {
         cityComboBox.getItems().setAll(cities);
         cityComboBox.setEditable(true);
 
-        cityComboBox.setConverter(new StringConverter<String>() {
+        cityComboBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(String object) {
                 return object != null ? object : "";
@@ -101,7 +111,8 @@ public class CreateAdController {
         });
     }
 
-    private void loadCategories() {
+    @Override
+    public void loadCategories() {
         try {
             List<String> categories = inMemoryDatabase.loadCategories();
             categoryComboBox.getItems().clear();
@@ -115,8 +126,9 @@ public class CreateAdController {
         }
     }
 
+    @Override
     @FXML
-    private void handleImageUpload() {
+    public void handleImageUpload() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Выберите изображение");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Изображения", "*.png", "*.jpg", "*.jpeg"));
@@ -127,8 +139,9 @@ public class CreateAdController {
         }
     }
 
+    @Override
     @FXML
-    private void handleCreateAd() {
+    public void handleCreateAd() throws Exception {
         try {
             if (!SessionManager.getInstance().isLoggedIn()) {
                 showAlert("Ошибка", "Вы должны быть авторизованы для создания объявления.");
@@ -181,10 +194,12 @@ public class CreateAdController {
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Ошибка", "Не удалось создать объявление: " + e.getMessage());
+            throw e;
         }
     }
 
-    private void refreshAdsOnIndexPage() {
+    @Override
+    public void refreshAdsOnIndexPage() {
         try {
             SceneManager sceneManager = SceneManager.getInstance();
             IndexController indexController = (IndexController) sceneManager.getCurrentController("index");
@@ -199,10 +214,12 @@ public class CreateAdController {
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Ошибка", "Не удалось обновить список объявлений: " + e.getMessage());
+            throw e;
         }
     }
 
-    private void showAlert(String title, String message) {
+    @Override
+    public void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -210,7 +227,8 @@ public class CreateAdController {
         alert.showAndWait();
     }
 
-    private void redirectToLogin() {
+    @Override
+    public void redirectToLogin() throws Exception {
         try {
             Stage currentStage = (Stage) titleField.getScene().getWindow();
             currentStage.close();
@@ -223,6 +241,7 @@ public class CreateAdController {
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Ошибка", "Не удалось перейти на страницу входа.");
+            throw e;
         }
     }
 }

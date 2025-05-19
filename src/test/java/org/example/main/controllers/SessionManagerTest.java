@@ -40,12 +40,11 @@ class SessionManagerTest {
 
     @Test
     void testAuthenticateUserSuccess() throws SQLException {
-        // Настраиваем поведение ResultSet для успешной аутентификации
+
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getInt("USER_ID")).thenReturn(1);
         when(resultSet.getBoolean("IS_ADMIN")).thenReturn(false);
 
-        // Настраиваем поведение InMemoryDatabase
         when(db.isLoggedIn()).thenReturn(true);
         when(db.getLoggedInUsername()).thenReturn("testuser");
         when(db.getLoggedInUserId()).thenReturn(1);
@@ -55,14 +54,12 @@ class SessionManagerTest {
         assertTrue(sessionManager.isLoggedIn(), "User should be logged in");
         assertEquals("testuser", sessionManager.getLoggedInUsername(), "Username should match");
 
-        // Проверяем, что preparedStatement был вызван с правильными параметрами
         verify(preparedStatement).setString(1, "testuser");
         verify(preparedStatement).setString(2, "password");
     }
 
     @Test
     void testLogout() throws SQLException {
-        // Настраиваем поведение для setLoggedInUser
         sessionManager.setLoggedInUser("testuser", 1);
         when(db.isLoggedIn()).thenReturn(false);
 

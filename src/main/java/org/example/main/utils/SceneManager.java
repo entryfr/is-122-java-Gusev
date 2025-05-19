@@ -67,6 +67,7 @@ public class SceneManager {
 
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
+            primaryStage.sizeToScene();
             primaryStage.show();
 
         } catch (IOException e) {

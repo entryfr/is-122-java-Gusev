@@ -20,8 +20,6 @@ public class AdDetailsController {
     @FXML private Button buyButton;
     @FXML private Button messageButton;
 
-    private int adId;
-
     @FXML
     public void initialize() {
         if (buyButton == null || messageButton == null) {
@@ -29,7 +27,7 @@ public class AdDetailsController {
             return;
         }
 
-        adId = (int) SceneManager.getInstance().getPassedParameter("adId", -1);
+        int adId = SceneManager.getInstance().getPassedParameter("adId", -1);
         if (adId > 0) {
             loadAdDetails(adId);
         } else {
@@ -44,7 +42,7 @@ public class AdDetailsController {
 
             if (ad != null) {
                 titleLabel.setText(ad.getTitle());
-                priceLabel.setText(String.format("%.2f руб.", ad.getPrice()));
+                priceLabel.setText(String.format("%.2f руб., Категория: %s", ad.getPrice(), ad.getCategoryName()));
                 descriptionField.setText(ad.getDescription());
                 locationLabel.setText(ad.getLocation());
 
@@ -86,9 +84,10 @@ public class AdDetailsController {
      */
     private Ad getAdById(InMemoryDatabase db, int adId) throws Exception {
         String query = """
-            SELECT AD_ID, TITLE, PRICE, DESCRIPTION, IMAGE_PATH, LOCATION, STATUS, USER_ID
-            FROM ADS
-            WHERE AD_ID = ? AND STATUS = 'active'
+            SELECT A.AD_ID, A.TITLE, A.PRICE, A.DESCRIPTION, A.IMAGE_PATH, A.LOCATION, A.STATUS, A.USER_ID, C.CATEGORY_NAME
+            FROM ADS A
+            JOIN CATEGORIES C ON A.CATEGORY_ID = C.CATEGORY_ID
+            WHERE A.AD_ID = ? AND A.STATUS = 'active'
         """;
         try (var stmt = db.getConnection().prepareStatement(query)) {
             stmt.setInt(1, adId);
@@ -103,6 +102,7 @@ public class AdDetailsController {
                 ad.setLocation(rs.getString("LOCATION"));
                 ad.setStatus(rs.getString("STATUS"));
                 ad.setSellerId(rs.getInt("USER_ID"));
+                ad.setCategoryName(rs.getString("CATEGORY_NAME"));
                 return ad;
             }
         }

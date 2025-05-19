@@ -30,7 +30,6 @@ public class ChatController {
 
     private final InMemoryDatabase database = InMemoryDatabase.getInstance();
     private final SessionManager sessionManager = SessionManager.getInstance();
-    private final SceneManager sceneManager = SceneManager.getInstance();
     private static final Logger logger = Logger.getLogger(ChatController.class.getName());
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     @FXML
@@ -39,7 +38,7 @@ public class ChatController {
             SceneManager.getInstance().showScene("index");
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Ошибка", "Не удалось вернуться на главную страницу.");
+            showAlert("Не удалось вернуться на главную страницу.");
         }
     }
     @FXML
@@ -53,7 +52,7 @@ public class ChatController {
     private void setupUser() {
         currentUserId = sessionManager.getLoggedInUserId();
         if (currentUserId == -1) {
-            showAlert("Ошибка", "Пользователь не авторизован");
+            showAlert("Пользователь не авторизован");
             return;
         }
         currentUsername = sessionManager.getLoggedInUsername();
@@ -72,9 +71,7 @@ public class ChatController {
             }
         });
 
-        messageInput.textProperty().addListener((obs, oldVal, newVal) -> {
-            sendButton.setDisable(newVal.trim().isEmpty());
-        });
+        messageInput.textProperty().addListener((obs, oldVal, newVal) -> sendButton.setDisable(newVal.trim().isEmpty()));
 
         messageInput.setOnAction(event -> sendMessage());
     }
@@ -88,7 +85,7 @@ public class ChatController {
             loadChatMessages();
         } catch (Exception e) {
             logger.severe("Ошибка выбора чата: " + e.getMessage());
-            showAlert("Ошибка", "Невозможно загрузить чат");
+            showAlert("Невозможно загрузить чат");
         }
     }
 
@@ -177,26 +174,9 @@ public class ChatController {
         }
     }
 
-    @FXML
-    private void backToPrevious() {
-        try {
-            SceneManager.getInstance().showScene("index");
-        } catch (Exception e) {
-            showAlert("Ошибка", "Не удалось вернуться назад");
-        }
-    }
-
-    @FXML
-    private void refreshChats() {
-        loadUserChats();
-        if (currentChatId != -1) {
-            loadChatMessages();
-        }
-    }
-
-    private void showAlert(String title, String message) {
+    private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
+        alert.setTitle("Ошибка");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
@@ -204,7 +184,7 @@ public class ChatController {
 
     private void handleDatabaseError(Exception e) {
         logger.severe("Database error: " + e.getMessage());
-        showAlert("Ошибка", "Ошибка при работе с базой данных");
+        showAlert("Ошибка при работе с базой данных");
     }
 
     public void setChatId(int chatId) {

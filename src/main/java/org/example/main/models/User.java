@@ -3,7 +3,7 @@ package org.example.main.models;
 public class User {
     private int userId;
     private String username;
-    private String password;
+
     private String email;
     private String firstName;
     private String lastName;
@@ -18,9 +18,7 @@ public class User {
         return username;
     }
 
-    public String getPassword() {
-        return password;
-    }
+
 
     public String getEmail() {
         return email;
@@ -51,9 +49,6 @@ public class User {
         this.username = username;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public void setEmail(String email) {
         this.email = email;
@@ -70,6 +65,7 @@ public class User {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
 
     public void setRegistrationDate(String registrationDate) {
         this.registrationDate = registrationDate;

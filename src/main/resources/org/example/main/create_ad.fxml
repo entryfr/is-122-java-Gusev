@@ -6,7 +6,11 @@
 
 <VBox spacing="20" alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.example.main.controllers.CreateAdController" style="-fx-background-color: #ffffff; -fx-padding: 30;">
-    <Label text="Создать объявление" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+
+    <Label  text="Создать объявление" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"
+    />
+    <Button text="×" onAction="#handleBackToIndex"></Button>
+
 
     <GridPane hgap="15" vgap="15" style="-fx-padding: 20; -fx-background-color: #f9f9f9; -fx-border-color: #e0e0e0; -fx-border-radius: 4;">
         <columnConstraints>
