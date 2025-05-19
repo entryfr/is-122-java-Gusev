@@ -110,7 +110,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.ev3nt.Main</mainClass>
+                            <mainClass>org.example.main.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
