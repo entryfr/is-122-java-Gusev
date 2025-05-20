@@ -1,0 +1,106 @@
+
+.root {
+    -fx-font-family: "Segoe UI", Arial;
+    -fx-base: #F8F9FA;
+    -fx-background-color: #E0D2D2;
+}
+
+.database-view {
+    -fx-padding: 20;
+    -fx-background-color: #FFFFFF;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 6, 0, 0, 2);
+    -fx-transition: all 0.3s;
+}
+
+
+.toolbar {
+    -fx-background-color: #4567b3; /* Темно-синий фон */
+    -fx-padding: 10;
+    -fx-spacing: 15;
+    -fx-border-radius: 8px 8px 0 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 1);
+}
+
+.combo-box {
+    -fx-pref-height: 40;
+    -fx-font-size: 14px;
+    -fx-background-color: white;
+    -fx-border-color: #dcdcdc;
+    -fx-border-radius: 5px;
+    -fx-transition: all 0.3s;
+}
+
+.combo-box:focused {
+    -fx-border-color: #4567b3;
+    -fx-effect: dropshadow(gaussian, rgba(69, 103, 179, 0.2), 4, 0, 0, 1);
+}
+
+.refresh-button {
+    -fx-background-color: #FF7675;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-pref-height: 40;
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s;
+}
+
+.refresh-button:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-background-color: #FF5C5C;
+}
+
+
+.data-table {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 4, 0, 0, 1);
+    -fx-padding: 15;
+    -fx-transition: all 0.3s;
+}
+
+.data-table .column-header {
+    -fx-background-color: #4567b3;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10;
+    -fx-border-radius: 5px;
+    -fx-transition: all 0.3s;
+}
+
+.data-table .column-header:hover {
+    -fx-background-color: #3a569c;
+}
+
+.data-table .table-cell {
+    -fx-background-color: #f9f9f9;
+    -fx-text-fill: #333333;
+    -fx-font-size: 14px;
+    -fx-padding: 10;
+    -fx-border-color: #e0e0e0;
+    -fx-transition: all 0.3s;
+}
+
+.data-table .table-row-cell:filled:selected {
+    -fx-background-color: #FF7675;
+    -fx-text-fill: white;
+
+.data-table .table-row-cell:filled:hover {
+    -fx-background-color: #f0f0f0;
+}
+
+
+.database-view .button {
+    -fx-opacity: 0.9;
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+.database-view .button:hover {
+    -fx-opacity: 1;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}

@@ -4,7 +4,8 @@
 <?import javafx.scene.layout.*?>
 
 <VBox spacing="20" alignment="CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.example.main.controllers.LoginController" style="-fx-background-color: #ffffff; -fx-padding: 40;">
+      fx:controller="org.example.main.controllers.LoginController"
+      stylesheets="@org/css/styles.css">
     <HBox alignment="TOP_RIGHT" style="-fx-padding: 0 0 20 0;">
         <Button text="×" onAction="#cancel"
                 style="-fx-font-size: 24px; -fx-background-color: transparent; -fx-text-fill: #666666;"/>

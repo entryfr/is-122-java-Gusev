@@ -5,24 +5,26 @@
 <?import javafx.scene.text.*?>
 
 <VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.main.controllers.FiltersController"
-      spacing="10" style="-fx-padding: 15; -fx-background-color: #f5f5f5; -fx-border-color: #ddd; -fx-border-width: 1;">
-    <Label text="Фильтры объявлений" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
+      spacing="10" styleClass="user-block" stylesheets="@org/css/styles.css">
+    <Label text="Фильтры объявлений" style="-fx-font-weight: bold; -fx-font-size: 14;" styleClass="welcome-label"/>
 
-    <Separator/>
+    <Separator styleClass="separator"/>
 
     <Label text="Категория:"/>
-    <ComboBox fx:id="categoryFilter" prefWidth="200"/>
+    <ComboBox fx:id="categoryFilter" prefWidth="200" styleClass="search-field"/>
+
     <Label text="Город:"/>
-    <ComboBox fx:id="cityFilter" promptText="Выберите город"/>
+    <ComboBox fx:id="cityFilter" promptText="Выберите город" styleClass="search-field"/>
+
     <Label text="Цена:"/>
     <HBox spacing="5">
-        <TextField fx:id="minPriceFilter" promptText="от" prefWidth="80"/>
+        <TextField fx:id="minPriceFilter" promptText="от" prefWidth="80" styleClass="search-field"/>
         <Label text="-"/>
-        <TextField fx:id="maxPriceFilter" promptText="до" prefWidth="80"/>
+        <TextField fx:id="maxPriceFilter" promptText="до" prefWidth="80" styleClass="search-field"/>
     </HBox>
 
     <HBox spacing="10" style="-fx-padding: 10 0 0 0;">
-        <Button text="Применить" onAction="#applyFilters" style="-fx-base: #4CAF50; -fx-text-fill: white;"/>
-        <Button text="Сбросить" onAction="#resetFilters"/>
+        <Button text="Применить" onAction="#applyFilters" styleClass="search-button"/>
+        <Button text="Сбросить" onAction="#resetFilters" styleClass="logout-button"/>
     </HBox>
 </VBox>

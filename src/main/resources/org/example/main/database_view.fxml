@@ -3,14 +3,14 @@
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.example.main.controllers.DatabaseViewController">
+            fx:controller="org.example.main.controllers.DatabaseViewController" styleClass="database-view" stylesheets="@org/css/database_view.css">
     <top>
-        <ToolBar>
-            <ComboBox fx:id="tablesCombo" promptText="Выберите таблицу"/>
-            <Button text="Обновить" onAction="#refreshData"/>
+        <ToolBar styleClass="toolbar">
+            <ComboBox fx:id="tablesCombo" promptText="Выберите таблицу" styleClass="combo-box"/>
+            <Button text="Обновить" onAction="#refreshData" styleClass="refresh-button"/>
         </ToolBar>
     </top>
     <center>
-        <TableView fx:id="dataTable"/>
+        <TableView fx:id="dataTable" styleClass="data-table"/>
     </center>
 </BorderPane>

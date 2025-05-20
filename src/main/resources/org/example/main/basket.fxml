@@ -4,30 +4,26 @@
 <?import javafx.scene.layout.*?>
 
 <VBox spacing="20" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.example.main.controllers.BasketController" style="-fx-background-color: #ffffff; -fx-padding: 30;">
-    <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 0 0 20 0;">
-        <Label text="Корзина" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;" HBox.hgrow="ALWAYS"/>
-        <Button text="×" onAction="#handleBackToIndex"
-                style="-fx-font-size: 24px; -fx-background-color: transparent; -fx-text-fill: #666666;"/>
+      fx:controller="org.example.main.controllers.BasketController" styleClass="basket-container" stylesheets="@org/css/basket.css">
+    <HBox spacing="10" alignment="CENTER_LEFT" styleClass="header-container">
+        <Label text="Корзина" styleClass="basket-title"/>
+        <Button text="×" onAction="#handleBackToIndex" styleClass="close-button"/>
     </HBox>
 
-    <ListView fx:id="basketList" style="-fx-pref-height: 400; -fx-border-color: #e0e0e0; -fx-border-radius: 4;">
+    <ListView fx:id="basketList" styleClass="basket-list">
         <placeholder>
-            <Label text="Корзина пуста" style="-fx-text-fill: #666666; -fx-font-size: 16px;"/>
+            <Label text="Корзина пуста" styleClass="empty-basket-label"/>
         </placeholder>
     </ListView>
 
-    <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Label text="Общая стоимость:" style="-fx-font-size: 16px; -fx-text-fill: #333333;"/>
-        <Label fx:id="totalPriceLabel" text="0.00 руб." style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+    <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="total-price-container">
+        <Label text="Общая стоимость:" styleClass="total-price-label"/>
+        <Label fx:id="totalPriceLabel" text="0.00 руб." styleClass="total-price-value"/>
     </HBox>
 
-    <HBox spacing="15" alignment="CENTER_RIGHT">
-        <Button text="Очистить корзину" onAction="#handleClearBasket"
-                style="-fx-background-color: #e0e0e0; -fx-text-fill: #333333;"/>
-        <Button text="Купить" onAction="#handleBuy"
-                style="-fx-background-color: #333333; -fx-text-fill: white; -fx-font-weight: bold;"/>
-        <Button text="Вернуться к покупкам" onAction="#handleBackToIndex"
-                style="-fx-background-color: #f5f5f5; -fx-text-fill: #333333;"/>
+    <HBox spacing="15" alignment="CENTER_RIGHT" styleClass="button-container">
+        <Button text="Очистить корзину" onAction="#handleClearBasket" styleClass="clear-basket-button"/>
+        <Button text="Купить" onAction="#handleBuy" styleClass="buy-button"/>
+        <Button text="Вернуться к покупкам" onAction="#handleBackToIndex" styleClass="back-to-shopping-button"/>
     </HBox>
 </VBox>

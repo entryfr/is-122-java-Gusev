@@ -6,48 +6,44 @@
 <?import javafx.scene.image.ImageView?>
 
 <VBox alignment="TOP_CENTER" spacing="20" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.main.controllers.AdDetailsController" style="-fx-background-color: #ffffff;">
+      fx:controller="org.example.main.controllers.AdDetailsController" styleClass="ad-details-container" stylesheets="@org/css/ad_details.css">
     <padding>
         <Insets bottom="30.0" left="30.0" right="30.0" top="30.0"/>
     </padding>
 
-    <Label text="Описание объявления" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+    <Label text="Описание объявления" styleClass="ad-title"/>
 
     <HBox alignment="CENTER" spacing="30">
         <VBox spacing="20" style="-fx-padding: 0 20 0 0;">
-            <ImageView fx:id="imageView" fitWidth="400" fitHeight="300" preserveRatio="true"
-                       style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0;"/>
+            <ImageView fx:id="imageView" fitWidth="400" fitHeight="300" preserveRatio="true" styleClass="ad-image"/>
         </VBox>
 
         <VBox spacing="15" style="-fx-pref-width: 400;">
             <VBox spacing="5">
-                <Label text="Название:" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
-                <Label fx:id="titleLabel" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                <Label text="Название:" styleClass="label-small"/>
+                <Label fx:id="titleLabel" styleClass="label-large"/>
             </VBox>
 
             <VBox spacing="5">
-                <Label text="Цена:" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
-                <Label fx:id="priceLabel" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                <Label text="Цена:" styleClass="label-small"/>
+                <Label fx:id="priceLabel" styleClass="label-large"/>
             </VBox>
 
             <VBox spacing="5">
-                <Label text="Описание:" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
-                <TextArea fx:id="descriptionField" editable="false" style="-fx-pref-height: 120; -fx-background-color: #f9f9f9;"/>
+                <Label text="Описание:" styleClass="label-small"/>
+                <TextArea fx:id="descriptionField" editable="false" styleClass="text-area"/>
             </VBox>
 
             <VBox spacing="5">
-                <Label text="Местоположение:" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
-                <Label fx:id="locationLabel" style="-fx-font-size: 14px; -fx-text-fill: #333333;"/>
+                <Label text="Местоположение:" styleClass="label-small"/>
+                <Label fx:id="locationLabel" styleClass="label-large"/>
             </VBox>
         </VBox>
     </HBox>
 
-    <HBox spacing="15" alignment="CENTER">
-        <Button fx:id="buyButton" text="Купить"
-                style="-fx-background-color: #333333; -fx-text-fill: white; -fx-font-weight: bold; -fx-pref-width: 120;"/>
-        <Button fx:id="messageButton" text="Написать продавцу"
-                style="-fx-background-color: #f5f5f5; -fx-text-fill: #333333; -fx-pref-width: 180;"/>
-        <Button text="Назад" onAction="#goBack"
-                style="-fx-background-color: #e0e0e0; -fx-text-fill: #333333; -fx-pref-width: 120;"/>
+    <HBox spacing="15" alignment="CENTER" styleClass="button-container">
+        <Button fx:id="buyButton" text="Купить" styleClass="buy-button"/>
+        <Button fx:id="messageButton" text="Написать продавцу" styleClass="message-button"/>
+        <Button text="Назад" onAction="#goBack" styleClass="back-button"/>
     </HBox>
 </VBox>

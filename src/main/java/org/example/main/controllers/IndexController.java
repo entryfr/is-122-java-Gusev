@@ -1,5 +1,6 @@
 package org.example.main.controllers;
 
+import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,6 +10,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.example.main.models.Ad;
 import org.example.main.utils.AuthObserver;
 import org.example.main.utils.SceneManager;
@@ -47,6 +49,12 @@ public class IndexController implements IndexControllerInterface, AuthObserver {
     @FXML
     public void initialize() {
         welcomeText.setText("Добро пожаловать в приложение!");
+        welcomeText.setOpacity(0);
+
+        FadeTransition fadeIn = new FadeTransition(Duration.seconds(2), welcomeText);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+        fadeIn.play();
         sessionManager.addObserver(this);
         updateUIBasedOnAuthStatus();
 

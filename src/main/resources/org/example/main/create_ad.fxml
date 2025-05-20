@@ -5,44 +5,41 @@
 <?import javafx.scene.image.ImageView?>
 
 <VBox spacing="20" alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.example.main.controllers.CreateAdController" style="-fx-background-color: #ffffff; -fx-padding: 30;">
+      fx:controller="org.example.main.controllers.CreateAdController" styleClass="create-ad-container" stylesheets="@org/css/create_ad.css">
 
-    <Label  text="Создать объявление" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"
-    />
-    <Button text="×" onAction="#handleBackToIndex"></Button>
+    <Label text="Создать объявление" styleClass="ad-title"/>
 
+    <Button text="×" onAction="#handleBackToIndex" styleClass="close-button"/>
 
-    <GridPane hgap="15" vgap="15" style="-fx-padding: 20; -fx-background-color: #f9f9f9; -fx-border-color: #e0e0e0; -fx-border-radius: 4;">
+    <GridPane hgap="15" vgap="15" styleClass="form-container">
         <columnConstraints>
             <ColumnConstraints hgrow="NEVER" minWidth="100"/>
             <ColumnConstraints hgrow="ALWAYS" minWidth="300"/>
         </columnConstraints>
 
-        <Label text="Название:" style="-fx-text-fill: #666666;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <TextField fx:id="titleField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+        <Label text="Название:" styleClass="label-small" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="titleField" styleClass="input-field" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-        <Label text="Категория:" style="-fx-text-fill: #666666;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="categoryComboBox" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <Label text="Категория:" styleClass="label-small" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="categoryComboBox" styleClass="combo-box" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-        <Label text="Цена:" style="-fx-text-fill: #666666;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <TextField fx:id="priceField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+        <Label text="Цена:" styleClass="label-small" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="priceField" styleClass="input-field" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-        <Label text="Описание:" style="-fx-text-fill: #666666;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-        <TextArea fx:id="descriptionField" GridPane.rowIndex="3" GridPane.columnIndex="1" style="-fx-pref-height: 120;"/>
+        <Label text="Описание:" styleClass="label-small" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextArea fx:id="descriptionField" styleClass="text-area" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-        <Label text="Изображение:" style="-fx-text-fill: #666666;" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <Label text="Изображение:" styleClass="label-small" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
         <HBox spacing="10" GridPane.rowIndex="4" GridPane.columnIndex="1">
-            <Button text="Выбрать изображение" onAction="#handleImageUpload"
-                    style="-fx-background-color: #333333; -fx-text-fill: white;"/>
+            <Button text="Выбрать изображение" onAction="#handleImageUpload" styleClass="upload-button"/>
         </HBox>
 
         <ImageView fx:id="imageView" fitWidth="200" fitHeight="200" preserveRatio="true" visible="false"
-                   GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                   styleClass="image-preview" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
 
-        <Label text="Город:" style="-fx-text-fill: #666666;" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="cityComboBox" editable="true" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+        <Label text="Город:" styleClass="label-small" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="cityComboBox" editable="true" styleClass="combo-box" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
     </GridPane>
 
-    <Button text="Создать объявление" onAction="#handleCreateAd"
-            style="-fx-background-color: #333333; -fx-text-fill: white; -fx-font-weight: bold; -fx-pref-width: 250;"/>
+    <Button text="Создать объявление" onAction="#handleCreateAd" styleClass="create-button"/>
 </VBox>

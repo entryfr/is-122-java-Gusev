@@ -670,14 +670,14 @@ public class InMemoryDatabase {
         }
     }
 
-    public int getBasketItemCount(int userId) throws SQLException {
-        String query = "SELECT COUNT(*) FROM USER_BASKET WHERE USER_ID = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            ResultSet rs = stmt.executeQuery();
-            return rs.next() ? rs.getInt(1) : 0;
-        }
-    }
+//    public int getBasketItemCount(int userId) throws SQLException {
+//        String query = "SELECT COUNT(*) FROM USER_BASKET WHERE USER_ID = ?";
+//        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+//            stmt.setInt(1, userId);
+//            ResultSet rs = stmt.executeQuery();
+//            return rs.next() ? rs.getInt(1) : 0;
+//        }
+//    }
 
     public List<Ad> getUserAds(int userId) throws SQLException {
         List<Ad> ads = new ArrayList<>();

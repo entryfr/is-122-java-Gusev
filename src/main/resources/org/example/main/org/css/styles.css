@@ -1,0 +1,121 @@
+
+.root {
+    -fx-font-family: "Segoe UI", Arial;
+    -fx-base: #F8F9FA;
+    -fx-background-color: #E0D2D2;
+    -fx-font-weight: 900;
+}
+
+.bottom-container {
+    -fx-background-color: #E0D2D2;
+    -fx-padding: 15;
+    -fx-spacing: 10;
+    -fx-border-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 6, 0, 0, 2);
+    -fx-transition: all 0.3s;
+}
+.welcome-label {
+    -fx-font-size: 28px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #2D3436;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0.5, 0, 1);
+}
+
+
+.button {
+
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 20px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
+
+    -fx-transition: all 0.3s;
+}
+
+.button:hover {
+    -fx-opacity: 0.9;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 6, 0, 0, 3);
+}
+
+
+.search-button {
+    -fx-background-color: #00B894; /* Мятный */
+    -fx-text-fill: white;
+}
+
+.filter-button {
+    -fx-background-color: #FDCB6E; /* Желтый */
+    -fx-text-fill: #2D3436;
+}
+
+.logout-button {
+    -fx-background-color: #FF7675; /* Красный */
+}
+
+.basket-button {
+    -fx-background-color: #6C5CE7; /* Фиолетовый */
+}
+
+.chat-button {
+    -fx-background-color: #FFEAA7; /* Светло-желтый */
+    -fx-text-fill: #2D3436;
+}
+
+.admin-button {
+    -fx-background-color: #636E72; /* Серый */
+}
+
+.profile-button {
+    -fx-background-color: #A55EEA; /* Лавандовый */
+}
+
+.register-button {
+    -fx-background-color: #00CEC9; /* Бирюзовый */
+}
+
+.create-ad-button {
+    -fx-background-color: #D63031; /* Темно-красный */
+}
+
+/* Список объявлений */
+.ads-list-view {
+    -fx-background-color: #E0D2D2;
+    -fx-border-color: #DFE6E9;
+    -fx-border-radius: 10px;
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(45,52,54,0.1), 8, 0, 0, 2);
+}
+
+
+.search-field {
+    -fx-prompt-text-fill: #B2BEC3;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #DFE6E9;
+    -fx-padding: 10px;
+}
+
+.search-field:focused {
+    -fx-border-color: #00B894;
+    -fx-effect: dropshadow(gaussian, rgba(0,184,148,0.2), 4, 0, 0, 1);
+}
+
+.user-block {
+    -fx-spacing: 15px;
+    -fx-alignment: center-right;
+    -fx-padding: 10px;
+    -fx-background-color: #F8F9FA;
+    -fx-background-radius: 10px;
+}
+VBox, HBox, .button {
+    -fx-transition: all 0.3s;
+}
+
+.button:hover {
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+.edit-button{
+    -fx-background-color: #D63031;
+}

@@ -1,10 +1,10 @@
 package org.example.main.controllers;
 
-import org.example.main.controllers.InMemoryDatabase;
+
 import org.example.main.utils.SessionManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

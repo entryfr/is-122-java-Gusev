@@ -8,62 +8,65 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" spacing="10" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.main.controllers.ProfileController">
+<VBox alignment="CENTER" spacing="10" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.main.controllers.ProfileController"
+      stylesheets="@org/css/styles.css">
     <padding>
         <Insets bottom="10" left="10" right="10" top="10"/>
     </padding>
 
+    <!-- Заголовок -->
+    <Label text="Профиль пользователя" style="-fx-font-size: 16px; -fx-font-weight: bold;" styleClass="welcome-label"/>
 
-    <Label text="Профиль пользователя" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-
+    <!-- Поля профиля -->
     <HBox spacing="10">
         <Label text="Имя пользователя:" minWidth="120"/>
-        <TextField fx:id="usernameField" editable="false" prefWidth="200"/>
+        <TextField fx:id="usernameField" editable="false" prefWidth="200" styleClass="search-field"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Email:" minWidth="120"/>
-        <TextField fx:id="emailField" prefWidth="200"/>
+        <TextField fx:id="emailField" prefWidth="200" styleClass="search-field"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Имя:" minWidth="120"/>
-        <TextField fx:id="firstNameField" prefWidth="200"/>
+        <TextField fx:id="firstNameField" prefWidth="200" styleClass="search-field"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Фамилия:" minWidth="120"/>
-        <TextField fx:id="lastNameField" prefWidth="200"/>
+        <TextField fx:id="lastNameField" prefWidth="200" styleClass="search-field"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Телефон:" minWidth="120"/>
-        <TextField fx:id="phoneField" prefWidth="200"/>
+        <TextField fx:id="phoneField" prefWidth="200" styleClass="search-field"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Дата регистрации:" minWidth="120"/>
-        <TextField fx:id="registrationDateField" editable="false" prefWidth="200"/>
+        <TextField fx:id="registrationDateField" editable="false" prefWidth="200" styleClass="search-field"/>
     </HBox>
 
-
+    <!-- Кнопки редактирования -->
     <VBox fx:id="editControls" spacing="10" visible="false" managed="false">
-        <Button fx:id="saveButton" text="Сохранить" onAction="#saveProfile"/>
-        <Button fx:id="cancelButton" text="Отменить" onAction="#cancelEdit"/>
+        <Button fx:id="saveButton" text="Сохранить" onAction="#saveProfile" styleClass="create-ad-button"/>
+        <Button fx:id="cancelButton" text="Отменить" onAction="#cancelEdit" styleClass="logout-button"/>
     </VBox>
 
+    <!-- Основные кнопки управления -->
     <HBox spacing="10">
-        <Button fx:id="editButton" text="Редактировать" onAction="#toggleEditMode"/>
-        <Button text="Выйти" onAction="#logout"/>
-        <Button text="На главную" onAction="#backToIndex"/>
+        <Button fx:id="editButton" text="Редактировать" onAction="#toggleEditMode" styleClass="edit-button"/>
+        <Button text="Выйти" onAction="#logout" styleClass="logout-button"/>
+        <Button text="На главную" onAction="#backToIndex" styleClass="basket-button"/>
     </HBox>
 
+    <!-- Список объявлений -->
+    <Label text="Мои объявления" style="-fx-font-size: 14px; -fx-font-weight: bold;" styleClass="welcome-label"/>
+    <ListView fx:id="userAdsList" prefHeight="150" styleClass="ads-list-view"/>
 
-    <Label text="Мои объявления" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
-    <ListView fx:id="userAdsList" prefHeight="150"/>
-
-
-    <Label text="Мои покупки" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
-    <ListView fx:id="userPurchasesList" prefHeight="150"/>
+    <!-- Список покупок -->
+    <Label text="Мои покупки" style="-fx-font-size: 14px; -fx-font-weight: bold;" styleClass="welcome-label"/>
+    <ListView fx:id="userPurchasesList" prefHeight="150" styleClass="ads-list-view"/>
 
 </VBox>

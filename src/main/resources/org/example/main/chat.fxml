@@ -4,38 +4,34 @@
 <?import javafx.scene.layout.*?>
 
 <VBox spacing="0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.example.main.controllers.ChatController" style="-fx-padding: 0;">
+      fx:controller="org.example.main.controllers.ChatController" styleClass="chat-container" stylesheets="@org/css/chat.css">
 
-    <HBox alignment="CENTER_LEFT" style="-fx-padding: 10 15; -fx-background-color: #ffffff;">
-        <Button text="← Назад" onAction="#handleBackToIndex"
-                style="-fx-font-size: 14px; -fx-background-color: transparent; -fx-text-fill: #2196F3; -fx-cursor: hand;" />
-        <Label fx:id="chatTitleLabel" text="Чат"
-               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333; -fx-padding: 0 0 0 10;" />
+    <!-- Заголовок -->
+    <HBox alignment="CENTER_LEFT" styleClass="chat-header">
+        <Button text="← Назад" onAction="#handleBackToIndex" styleClass="back-button"/>
+        <Label fx:id="chatTitleLabel" text="Чат" styleClass="chat-title"/>
     </HBox>
 
-    <SplitPane dividerPositions="0.3" style="-fx-background-color: transparent; -fx-padding: 0;">
+    <!-- Основной контент -->
+    <SplitPane dividerPositions="0.3" styleClass="split-pane">
 
-        <VBox style="-fx-background-color: #f9f9f9; -fx-border-color: #e0e0e0; -fx-border-width: 0 1 0 0;">
-            <Label text="Список чатов"
-                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333; -fx-padding: 15 10;" />
-            <ListView fx:id="chatListView" VBox.vgrow="ALWAYS"
-                      style="-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 5;" />
+        <!-- Список чатов -->
+        <VBox styleClass="chat-list-container">
+            <Label text="Список чатов" styleClass="chat-list-title"/>
+            <ListView fx:id="chatListView" VBox.vgrow="ALWAYS" styleClass="chat-list"/>
         </VBox>
 
-        <VBox style="-fx-padding: 0; -fx-background-color: #ffffff;">
-            <ScrollPane fx:id="messagesScrollPane" fitToWidth="true" hbarPolicy="NEVER" vvalue="1.0"
-                        style="-fx-background: white; -fx-border-color: #e0e0e0; -fx-padding: 0;">
-                <VBox fx:id="messagesContainer" spacing="15" style="-fx-padding: 15;">
+        <!-- Сообщения -->
+        <VBox styleClass="messages-container">
+            <ScrollPane fx:id="messagesScrollPane" fitToWidth="true" hbarPolicy="NEVER" vvalue="1.0" styleClass="messages-scroll">
+                <VBox fx:id="messagesContainer" spacing="15" styleClass="messages-box">
                 </VBox>
             </ScrollPane>
 
-
-            <HBox alignment="CENTER" spacing="10" style="-fx-padding: 10; -fx-background-color: #f9f9f9; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
-                <TextField fx:id="messageInput" promptText="Введите сообщение..." HBox.hgrow="ALWAYS"
-                           style="-fx-pref-height: 45; -fx-font-size: 14px; -fx-background-radius: 25; -fx-border-radius: 25; -fx-border-color: #dcdcdc;" />
-                <Button fx:id="sendButton" text="Отправить"
-                        style="-fx-pref-height: 45; -fx-pref-width: 100; -fx-font-size: 14px;
-                              -fx-background-color: #2196F3; -fx-text-fill: white; -fx-background-radius: 25;" />
+            <!-- Панель ввода сообщений -->
+            <HBox alignment="CENTER" spacing="10" styleClass="input-container">
+                <TextField fx:id="messageInput" promptText="Введите сообщение..." HBox.hgrow="ALWAYS" styleClass="message-input"/>
+                <Button fx:id="sendButton" text="Отправить" styleClass="send-button"/>
             </HBox>
         </VBox>
     </SplitPane>
