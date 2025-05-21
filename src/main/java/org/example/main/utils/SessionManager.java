@@ -41,10 +41,6 @@ public class SessionManager {
         observers.add(observer);
     }
 
-    public void removeObserver(AuthObserver observer) {
-        observers.remove(observer);
-    }
-
     private void notifyObservers() {
         for (AuthObserver observer : observers) {
             observer.onAuthStateChanged();

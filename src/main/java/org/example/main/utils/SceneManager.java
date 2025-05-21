@@ -139,13 +139,7 @@ public class SceneManager {
         System.out.println("Параметры очищены.");
     }
 
-    /**
-     * Очищает все зарегистрированные контроллеры.
-     */
-    public void clearControllers() {
-        controllers.clear();
-        System.out.println("Все контроллеры очищены.");
-    }
+
 
     /**
      * Интерфейс для контроллеров, поддерживающих передачу параметров.

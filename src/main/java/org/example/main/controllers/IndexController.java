@@ -59,7 +59,7 @@ public class IndexController implements IndexControllerInterface, AuthObserver {
         updateUIBasedOnAuthStatus();
 
         // Настраиваем отображение элементов в списке объявлений
-        adsList.setCellFactory(param -> new ListCell<Ad>() {
+        adsList.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(Ad ad, boolean empty) {
                 super.updateItem(ad, empty);

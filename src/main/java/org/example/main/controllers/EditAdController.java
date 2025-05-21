@@ -17,8 +17,7 @@ public class EditAdController {
     @FXML private TextField priceField;
     @FXML private ComboBox<String> categoryComboBox;
     @FXML private ComboBox<String> locationComboBox;
-    @FXML private Button saveButton;
-    @FXML private Button cancelButton;
+
 
     private final InMemoryDatabase db = InMemoryDatabase.getInstance();
     private final SessionManager sessionManager = SessionManager.getInstance();

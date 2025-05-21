@@ -3,7 +3,6 @@ package org.example.main.utils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.UUID;
 
 public class ImageUtils {
 
@@ -22,20 +21,4 @@ public class ImageUtils {
         return Files.readAllBytes(file.toPath());
     }
 
-    /**
-     * Получает расширение файла из его имени.
-     *
-     * @param fileName имя файла
-     * @return расширение файла
-     */
-    private static String getFileExtension(String fileName) {
-        if (fileName == null || fileName.isEmpty()) {
-            return "png";
-        }
-        int lastIndex = fileName.lastIndexOf('.');
-        if (lastIndex == -1) {
-            return "png";
-        }
-        return fileName.substring(lastIndex + 1).toLowerCase();
-    }
 }

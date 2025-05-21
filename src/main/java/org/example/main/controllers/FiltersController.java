@@ -106,7 +106,7 @@ public class FiltersController {
 
     public static class FilterParams {
         public final String category;
-        public final String city; // Добавлено поле для города
+        public final String city;
         public final Double minPrice;
         public final Double maxPrice;
 

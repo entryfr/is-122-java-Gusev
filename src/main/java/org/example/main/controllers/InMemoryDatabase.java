@@ -661,24 +661,6 @@ public class InMemoryDatabase {
         }
     }
 
-    public double getTotalPrice(int userId) throws SQLException {
-        String query = "SELECT SUM(PRICE) AS TOTAL_PRICE FROM ADS WHERE AD_ID IN (SELECT AD_ID FROM USER_BASKET WHERE USER_ID = ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            ResultSet rs = stmt.executeQuery();
-            return rs.next() ? rs.getDouble("TOTAL_PRICE") : 0.0;
-        }
-    }
-
-//    public int getBasketItemCount(int userId) throws SQLException {
-//        String query = "SELECT COUNT(*) FROM USER_BASKET WHERE USER_ID = ?";
-//        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-//            stmt.setInt(1, userId);
-//            ResultSet rs = stmt.executeQuery();
-//            return rs.next() ? rs.getInt(1) : 0;
-//        }
-//    }
-
     public List<Ad> getUserAds(int userId) throws SQLException {
         List<Ad> ads = new ArrayList<>();
         String query = """
@@ -709,10 +691,10 @@ public class InMemoryDatabase {
     }
     public void updateAd(int adId, int categoryId, String title, String description, double price, String location) throws SQLException {
         String query = """
-        UPDATE ADS 
+        UPDATE ADS\s
         SET CATEGORY_ID = ?, TITLE = ?, DESCRIPTION = ?, PRICE = ?, LOCATION = ?
         WHERE AD_ID = ? AND STATUS = 'active'
-    """;
+   \s""";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, categoryId);
             stmt.setString(2, title);
@@ -725,14 +707,6 @@ public class InMemoryDatabase {
                 throw new SQLException("Не удалось обновить объявление. Возможно, оно неактивно или не существует.");
             }
             System.out.println("Объявление обновлено: ID=" + adId);
-        }
-    }
-    public String getCategoryNameById(int categoryId) throws SQLException {
-        String query = "SELECT CATEGORY_NAME FROM CATEGORIES WHERE CATEGORY_ID = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, categoryId);
-            ResultSet rs = stmt.executeQuery();
-            return rs.next() ? rs.getString("CATEGORY_NAME") : null;
         }
     }
 
