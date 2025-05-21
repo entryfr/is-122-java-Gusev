@@ -19,6 +19,8 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>17.0.6</version>
+            <type>jar</type>
+            <classifier>win</classifier>
         </dependency>
 
         <!-- JavaFX FXML -->
@@ -26,6 +28,8 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>17.0.6</version>
+            <type>jar</type>
+            <classifier>win</classifier>
         </dependency>
 
         <!-- SQLite JDBC Driver -->
