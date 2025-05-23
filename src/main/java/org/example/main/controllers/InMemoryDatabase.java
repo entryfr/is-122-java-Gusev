@@ -7,7 +7,10 @@ import org.example.main.models.Message;
 import org.example.main.models.User;
 import org.example.main.utils.SessionManager;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
@@ -31,7 +34,9 @@ public class InMemoryDatabase {
             boolean dbExists = Files.exists(Paths.get(DB_PATH));
             System.out.println("Файл БД существует? " + dbExists);
 
-            connection = DriverManager.getConnection("jdbc:sqlite:" + dbUri);
+            try {
+                connection = DriverManager.getConnection("jdbc:sqlite:" + dbUri);
+            } catch (SQLException ignore) {}
 
             if (!dbExists) {
                 System.out.println("Инициализация новой БД...");
@@ -58,9 +63,24 @@ public class InMemoryDatabase {
         System.out.println("Initial data successfully loaded");
     }
 
-    private String readResourceFile(String fileName) throws IOException {
-        String filePath = "C:/Users/user152/IdeaProjects/Main/" + fileName;
-        return Files.readString(Paths.get(filePath));
+    private String readResourceFile(String fileName) {
+        InputStream stream = InMemoryDatabase.class.getResourceAsStream(fileName.replace("\\", "/"));
+        System.out.println(stream);
+        StringBuilder builder = new StringBuilder();
+
+        if (stream != null) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            String line;
+
+            try {
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line);
+                    builder.append(System.lineSeparator());
+                }
+            } catch (IOException ignore) {}
+        }
+
+        return builder.toString();
     }
     public void addCategory(String categoryName) throws SQLException {
         String query = "INSERT INTO CATEGORIES (CATEGORY_NAME) VALUES (?)";

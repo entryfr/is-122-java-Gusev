@@ -14,6 +14,12 @@
 
     <!-- Зависимости -->
     <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.woodstox</groupId>
+            <artifactId>woodstox-core</artifactId>
+            <version>6.5.1</version>
+        </dependency>
+
         <!-- JavaFX Controls -->
         <dependency>
             <groupId>org.openjfx</groupId>
